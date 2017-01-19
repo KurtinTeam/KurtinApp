@@ -34,10 +34,36 @@
         />
 
     <Button
-        android:id="@+id/btnAccessToken"
+        android:id="@+id/btnFacebookAccessToken"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/btnFacebook"
+        android:layout_toRightOf="@+id/btnFacebookLogOut"
+        android:text="Token"
+        />
+
+    <Button
+        android:id="@+id/btnTwitterLogIn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnFacebookLogIn"
+        android:text="TW Login"
+        />
+
+    <Button
+        android:id="@+id/btnTwitterLogOut"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnFacebookLogIn"
+        android:layout_toRightOf="@+id/btnFacebookLogIn"
+        android:text="TW Logout"
+        />
+
+    <Button
+        android:id="@+id/btnTwitterAccessToken"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnFacebookLogIn"
         android:layout_toRightOf="@+id/btnFacebookLogOut"
         android:text="Token"
         />

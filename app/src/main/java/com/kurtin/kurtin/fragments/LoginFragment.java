@@ -21,9 +21,11 @@ import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.kurtin.kurtin.R;
+import com.kurtin.kurtin.clients.TwitterClient;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -43,7 +45,10 @@ public class LoginFragment extends Fragment {
     private View mParentView;
     private Button btnFacebookLogIn;
     private Button btnFacebookLogOut;
-    private Button btnAccessToken;
+    private Button btnFacebookAccessToken;
+    private Button btnTwitterLogIn;
+    private Button btnTwitterLogOut;
+    private Button btnTwitterAccessToken;
     private LoginButton btnFacebook;
 
     private CallbackManager mCallbackManager;
@@ -105,7 +110,10 @@ public class LoginFragment extends Fragment {
         btnFacebook = (LoginButton) mParentView.findViewById(R.id.btnFacebook);
         btnFacebookLogIn = (Button) mParentView.findViewById(R.id.btnFacebookLogIn);
         btnFacebookLogOut = (Button) mParentView.findViewById(R.id.btnFacebookLogOut);
-        btnAccessToken = (Button) mParentView.findViewById(R.id.btnAccessToken);
+        btnFacebookAccessToken = (Button) mParentView.findViewById(R.id.btnFacebookAccessToken);
+        btnTwitterLogIn = (Button) mParentView.findViewById(R.id.btnTwitterLogIn);
+        btnTwitterLogOut = (Button) mParentView.findViewById(R.id.btnTwitterLogOut);
+        btnTwitterAccessToken = (Button) mParentView.findViewById(R.id.btnTwitterAccessToken);
 
         setupDefaultFbButton();
     }
@@ -148,7 +156,7 @@ public class LoginFragment extends Fragment {
             }
         });
 
-        btnAccessToken.setOnClickListener(new View.OnClickListener() {
+        btnFacebookAccessToken.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AccessToken accessToken = AccessToken.getCurrentAccessToken();
@@ -157,6 +165,36 @@ public class LoginFragment extends Fragment {
                 }else {
                     Toast.makeText(getContext(), accessToken.toString(), Toast.LENGTH_SHORT).show();
                 }
+            }
+        });
+
+        btnTwitterLogIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mListener != null){
+                    mListener.onTwitterLoginRequested();
+                }else{
+                    Log.e(TAG, "Must implement LoginFragmentListener");
+                }
+            }
+        });
+
+        btnTwitterLogOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mListener != null){
+                    TwitterClient.getInstance(TwitterClient.class, getContext()).clearAccessToken();
+                }else{
+                    Log.e(TAG, "Must implement LoginFragmentListener");
+                }
+            }
+        });
+
+        btnTwitterAccessToken.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String string = TwitterLoginFragment.getTokenInfo(getContext());
+                Toast.makeText(getContext(), "Twitter Token: " + string, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -205,5 +243,6 @@ public class LoginFragment extends Fragment {
     public interface LoginFragmentListener {
         // TODO: Update argument type and name
         //void onFragmentInteraction(Uri uri);
+        void onTwitterLoginRequested();
     }
 }
