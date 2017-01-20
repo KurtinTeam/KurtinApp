@@ -21,6 +21,7 @@ import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.kurtin.kurtin.R;
+import com.kurtin.kurtin.clients.InstagramClient;
 import com.kurtin.kurtin.clients.TwitterClient;
 
 import java.util.ArrayList;
@@ -49,6 +50,9 @@ public class LoginFragment extends Fragment {
     private Button btnTwitterLogIn;
     private Button btnTwitterLogOut;
     private Button btnTwitterAccessToken;
+    private Button btnInstagramLogIn;
+    private Button btnInstagramLogOut;
+    private Button btnInstagramAccessToken;
     private LoginButton btnFacebook;
 
     private CallbackManager mCallbackManager;
@@ -114,6 +118,9 @@ public class LoginFragment extends Fragment {
         btnTwitterLogIn = (Button) mParentView.findViewById(R.id.btnTwitterLogIn);
         btnTwitterLogOut = (Button) mParentView.findViewById(R.id.btnTwitterLogOut);
         btnTwitterAccessToken = (Button) mParentView.findViewById(R.id.btnTwitterAccessToken);
+        btnInstagramLogIn = (Button) mParentView.findViewById(R.id.btnInstagramLogIn);
+        btnInstagramLogOut = (Button) mParentView.findViewById(R.id.btnInstagramLogOut);
+        btnInstagramAccessToken = (Button) mParentView.findViewById(R.id.btnInstagramAccessToken);
 
         setupDefaultFbButton();
     }
@@ -163,7 +170,7 @@ public class LoginFragment extends Fragment {
                 if (accessToken == null){
                     Toast.makeText(getContext(), "Null access token", Toast.LENGTH_SHORT).show();
                 }else {
-                    Toast.makeText(getContext(), accessToken.toString(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "FB Token: " + accessToken.getToken(), Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -195,6 +202,36 @@ public class LoginFragment extends Fragment {
             public void onClick(View v) {
                 String string = TwitterLoginFragment.getTokenInfo(getContext());
                 Toast.makeText(getContext(), "Twitter Token: " + string, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        btnInstagramLogIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mListener != null){
+                    mListener.onInstagramLoginRequested();
+                }else{
+                    Log.e(TAG, "Must implement LoginFragmentListener");
+                }
+            }
+        });
+
+        btnInstagramLogOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mListener != null){
+                    InstagramClient.getInstance(InstagramClient.class, getContext()).clearAccessToken();
+                }else{
+                    Log.e(TAG, "Must implement LoginFragmentListener");
+                }
+            }
+        });
+
+        btnInstagramAccessToken.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String string = InstagramLoginFragment.getTokenInfo(getContext());
+                Toast.makeText(getContext(), "Instagram Token: " + string, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -244,5 +281,6 @@ public class LoginFragment extends Fragment {
         // TODO: Update argument type and name
         //void onFragmentInteraction(Uri uri);
         void onTwitterLoginRequested();
+        void onInstagramLoginRequested();
     }
 }

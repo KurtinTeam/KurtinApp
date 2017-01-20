@@ -4,28 +4,30 @@ import android.content.Context;
 import android.util.Log;
 
 import com.codepath.oauth.OAuthBaseClient;
+import com.kurtin.kurtin.networking.InstagramApi;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import org.scribe.builder.api.Api;
 import org.scribe.builder.api.TwitterApi;
 
 /**
- * Created by cvar on 1/13/17.
+ * Created by cvar on 1/19/17.
  */
 
-public class TwitterClient extends OAuthBaseClient {
+public class InstagramClient extends OAuthBaseClient {
+
     //Added constants
-    public static final String SCHEME = "oauth";  //Need to match REST_CALLBACK_URL below
-    public static final String HOST = "kurtin.twitter.com"; //Need to match REST_CALLBACK_URL below
+    public static final String SCHEME = "http";
+    public static final String HOST = "kurtin.college.app.instagram.oauth.com";
 
-    //Class out of the box dependant constants
-    public static final Class<? extends Api> REST_API_CLASS = TwitterApi.class; // Change this
-    public static final String REST_URL = "https://api.twitter.com/1.1"; // Change this, base API URL
-    public static final String REST_CONSUMER_KEY = "SeSJfeLoJez2e5uWiKm3wildX";       // Change this
-    public static final String REST_CONSUMER_SECRET = "sc7wk6aCCMUjvyqg7WdqyxQ6bOf2uq4CoEgW79iAB2NFpFIRS3"; // Change this
-    public static final String REST_CALLBACK_URL = "oauth://kurtin.twitter.com"; // Change this (here and in manifest)
+    //Class dependant constants
+    public static final Class<? extends Api> REST_API_CLASS = InstagramApi.class; // Change this
+    public static final String REST_URL = "https://api.instagram.com/v1"; // Change this, base API URL
+    public static final String REST_CONSUMER_KEY = "32b79b5450c041f692335f0f7ef07e14";       // Change this
+    public static final String REST_CONSUMER_SECRET = "a383802ab54f4536967b52f471b2fff9"; // Change this
+    public static final String REST_CALLBACK_URL = "http://kurtin.college.app.instagram.oauth.com"; // Change this (here and in manifest)
 
-    public TwitterClient(Context context) {
+    public InstagramClient(Context context) {
         super(context, REST_API_CLASS, REST_URL, REST_CONSUMER_KEY, REST_CONSUMER_SECRET, REST_CALLBACK_URL);
     }
 

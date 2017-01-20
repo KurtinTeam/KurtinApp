@@ -11,25 +11,34 @@ import android.widget.FrameLayout;
 
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
+import com.kurtin.kurtin.clients.InstagramClient;
 import com.kurtin.kurtin.clients.TwitterClient;
+import com.kurtin.kurtin.fragments.InstagramLoginFragment;
 import com.kurtin.kurtin.fragments.LoginFragment;
 import com.kurtin.kurtin.fragments.TwitterLoginFragment;
+import com.kurtin.kurtin.listeners.AuthenticationListener;
+
 
 public class MainActivity extends AppCompatActivity implements
-        LoginFragment.LoginFragmentListener {
+        LoginFragment.LoginFragmentListener,
+        AuthenticationListener{
 
     private static final String TAG = "MainActivity";
 
-    private FrameLayout fragmentFrame;
-    private FrameLayout fragmentFrameFullScreen;
+    private FrameLayout flFragmentFrame;
+    private FrameLayout flFragmentFrameFullScreen;
+
+    private Boolean mLoginInProgress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        fragmentFrame = (FrameLayout) findViewById(R.id.fragmentFrame);
-        fragmentFrameFullScreen = (FrameLayout) findViewById(R.id.fragmentFrameFullScreen);
+        flFragmentFrame = (FrameLayout) findViewById(R.id.flFragmentFrame);
+        flFragmentFrameFullScreen = (FrameLayout) findViewById(R.id.flFragmentFrameFullScreen);
+
+        mLoginInProgress = false;
 
         //Facebook
         FacebookSdk.sdkInitialize(getApplicationContext());
@@ -43,15 +52,27 @@ public class MainActivity extends AppCompatActivity implements
         //Debugging
         // Fetch the uri that was passed in (which exists if this is being returned from authorization flow)
         Uri uri = getIntent().getData();
+        //Check if we are getting a callback from an Oauth service
         if (uri == null){
+            //No callback. show home screen.
             LoginFragment loginFragment = LoginFragment.newInstance();
             showFragment(loginFragment, "loginFragment", false);
         }else{
+            //Check if callback is from twitter
             if (uri.getScheme().equals(TwitterClient.SCHEME)){
                if(uri.getHost().equals(TwitterClient.HOST)){
-                   TwitterLoginFragment twitterLoginFragment = TwitterLoginFragment.newInstance();
+                   Boolean loginIsInProgress = true;
+                   TwitterLoginFragment twitterLoginFragment = TwitterLoginFragment.newInstance(loginIsInProgress);
                    showFragment(twitterLoginFragment, TwitterLoginFragment.TAG, false);
                }
+            }
+            //Check if callback is from Instagram
+            else if (uri.getScheme().equals(InstagramClient.SCHEME)){
+                if (uri.getHost().equals(InstagramClient.HOST)) {
+                    Boolean loginIsInProgress = true;
+                    InstagramLoginFragment instagramLoginFragment = InstagramLoginFragment.newInstance(loginIsInProgress);
+                    showFragment(instagramLoginFragment, InstagramLoginFragment.TAG, false);
+                }
             }
 //            Log.v(TAG, "intent data: " + uri.toString());
 //            Log.v(TAG, "intent data scheme: " + uri.getScheme());
@@ -70,13 +91,13 @@ public class MainActivity extends AppCompatActivity implements
         int viewId;
 
         if(showFullScreen){
-            viewId = R.id.fragmentFrameFullScreen;
-            fragmentFrameFullScreen.setVisibility(View.VISIBLE);
-            fragmentFrame.setVisibility(View.GONE);
+            viewId = R.id.flFragmentFrameFullScreen;
+            flFragmentFrameFullScreen.setVisibility(View.VISIBLE);
+            flFragmentFrame.setVisibility(View.GONE);
         }else{
-            viewId = R.id.fragmentFrame;
-            fragmentFrame.setVisibility(View.VISIBLE);
-            fragmentFrameFullScreen.setVisibility(View.GONE);
+            viewId = R.id.flFragmentFrame;
+            flFragmentFrame.setVisibility(View.VISIBLE);
+            flFragmentFrameFullScreen.setVisibility(View.GONE);
         }
 
         Log.v(TAG, "before ft.replace()");
@@ -100,6 +121,24 @@ public class MainActivity extends AppCompatActivity implements
     public void onTwitterLoginRequested(){
         TwitterLoginFragment twitterLoginFragment = TwitterLoginFragment.newInstance();
         showFragment(twitterLoginFragment, TwitterLoginFragment.TAG, false);
-//        Log.v(TAG, "Called showFragment for twitterLoginFragmet");
+    }
+
+    @Override
+    public void onInstagramLoginRequested(){
+        InstagramLoginFragment instagramLoginFragment = InstagramLoginFragment.newInstance();
+        showFragment(instagramLoginFragment, InstagramLoginFragment.TAG, false);
+    }
+
+
+    //AuthenticationListener
+    @Override
+    public void onAuthenticationCompleted(Platform platform){
+        LoginFragment loginFragment = LoginFragment.newInstance();
+        showFragment(loginFragment, "loginFragment", false);
+    }
+
+    @Override
+    public Boolean loginInProgress(){
+        return mLoginInProgress;
     }
 }

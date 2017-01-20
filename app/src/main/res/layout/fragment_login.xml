@@ -68,4 +68,30 @@
         android:text="Token"
         />
 
+    <Button
+        android:id="@+id/btnInstagramLogIn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnTwitterLogIn"
+        android:text="IG Login"
+        />
+
+    <Button
+        android:id="@+id/btnInstagramLogOut"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnTwitterLogIn"
+        android:layout_toRightOf="@+id/btnFacebookLogIn"
+        android:text="IG Logout"
+        />
+
+    <Button
+        android:id="@+id/btnInstagramAccessToken"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnTwitterLogIn"
+        android:layout_toRightOf="@+id/btnFacebookLogOut"
+        android:text="Token"
+        />
+
 </RelativeLayout>

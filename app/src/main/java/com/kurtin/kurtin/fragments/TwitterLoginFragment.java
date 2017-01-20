@@ -15,18 +15,35 @@ import android.widget.Toast;
 import com.codepath.oauth.OAuthLoginFragment;
 import com.kurtin.kurtin.R;
 import com.kurtin.kurtin.clients.TwitterClient;
+import com.kurtin.kurtin.listeners.AuthenticationListener;
 
 import org.scribe.model.Token;
+
+
 
 public class TwitterLoginFragment extends OAuthLoginFragment<TwitterClient> {
 
     public static final String TAG = "TwitterLoginFragment";
+    public static final AuthenticationListener.Platform PLATFORM = AuthenticationListener.Platform.TWITTER;
 
-    Button btnLoginTwitter;
+    private static final String LOGIN_IN_PROGRESS = "loginInProgress";
+
+    AuthenticationListener mListener;
 
     public static TwitterLoginFragment newInstance() {
 
         Bundle args = new Bundle();
+        args.putBoolean(LOGIN_IN_PROGRESS, false);
+
+        TwitterLoginFragment fragment = new TwitterLoginFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public static TwitterLoginFragment newInstance(Boolean loginInProgress) {
+
+        Bundle args = new Bundle();
+        args.putBoolean(LOGIN_IN_PROGRESS, loginInProgress);
 
         TwitterLoginFragment fragment = new TwitterLoginFragment();
         fragment.setArguments(args);
@@ -42,14 +59,28 @@ public class TwitterLoginFragment extends OAuthLoginFragment<TwitterClient> {
     public void onActivityCreated(Bundle saved) {
         super.onActivityCreated(saved);
 
-        // Fetch the uri that was passed in (which exists if this is being returned from authorization flow)
-        Uri uri = getActivity().getIntent().getData();
-        if (uri == null) {
+        Bundle args = getArguments();
+        Boolean loginIsInProgress = args.getBoolean(LOGIN_IN_PROGRESS);
+        if (!loginIsInProgress) {
             authenticate();
         }
+    }
 
-//        btnLoginTwitter = (Button) getActivity.findViewById(R.id.btnLoginTwitter);
-//        btnLoginTwitter.setOnClickListener(new ServiceButtonOnClickListener());
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof AuthenticationListener) {
+            mListener = (AuthenticationListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement LoginFragmentListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
     }
 
     @Override
@@ -59,6 +90,7 @@ public class TwitterLoginFragment extends OAuthLoginFragment<TwitterClient> {
 //        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
 //        startActivity(i);
         showTokenInfo();
+        mListener.onAuthenticationCompleted(PLATFORM);
     }
 
     @Override

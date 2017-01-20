@@ -21,8 +21,8 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data
-                    android:host="kurtin.instagram.com"
-                    android:scheme="oauth" />
+                    android:host="kurtin.college.app.instagram.oauth.com"
+                    android:scheme="http" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />

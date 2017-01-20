@@ -19,12 +19,12 @@
         />
 
     <FrameLayout
-        android:id="@+id/fragmentFrame"
+        android:id="@+id/flFragmentFrame"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
     <FrameLayout
-        android:id="@+id/fragmentFrameFullScreen"
+        android:id="@+id/flFragmentFrameFullScreen"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"/>
