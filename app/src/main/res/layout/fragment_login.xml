@@ -39,7 +39,16 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/btnFacebook"
         android:layout_toRightOf="@+id/btnFacebookLogOut"
-        android:text="Token"
+        android:text="FB Token"
+        />
+
+    <Button
+        android:id="@+id/btnFacebookMe"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnFacebook"
+        android:layout_toRightOf="@+id/btnFacebookAccessToken"
+        android:text="FB Me"
         />
 
     <Button
@@ -65,7 +74,16 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/btnFacebookLogIn"
         android:layout_toRightOf="@+id/btnFacebookLogOut"
-        android:text="Token"
+        android:text="TW Token"
+        />
+
+    <Button
+        android:id="@+id/btnTwitterMe"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnFacebookLogIn"
+        android:layout_toRightOf="@+id/btnFacebookAccessToken"
+        android:text="TW Me"
         />
 
     <Button
@@ -91,7 +109,50 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/btnTwitterLogIn"
         android:layout_toRightOf="@+id/btnFacebookLogOut"
-        android:text="Token"
+        android:text="IG Token"
         />
+
+    <Button
+        android:id="@+id/btnInstagramMe"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnTwitterMe"
+        android:layout_toRightOf="@+id/btnFacebookAccessToken"
+        android:text="IG Me"
+        />
+
+    <Button
+        android:id="@+id/btnKLogFB"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnInstagramLogIn"
+        android:text="Klog_FB"
+        />
+
+    <Button
+        android:id="@+id/btnKLogTW"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnInstagramLogIn"
+        android:layout_toRightOf="@+id/btnKLogFB"
+        android:text="KLog_TW"
+        />
+
+    <Button
+        android:id="@+id/btnKLogIG"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnInstagramLogIn"
+        android:layout_toRightOf="@+id/btnKLogTW"
+        android:text="KLog_IG"
+        />
+
+    <Button
+        android:id="@+id/btnGoToTest"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnKLogFB"
+        android:text="test"/>
+
 
 </RelativeLayout>

@@ -31,8 +31,11 @@ dependencies {
     })
 
     compile 'com.android.support:appcompat-v7:24.2.1'
-    compile 'com.facebook.android:facebook-android-sdk:[4,5)'
+//    compile 'com.facebook.android:facebook-android-sdk:[4,5)'
+    compile 'com.facebook.android:facebook-android-sdk:4.18.0'
     compile 'com.android.support:support-v4:24.2.1'
     compile 'com.codepath.libraries:android-oauth-handler:1.1.0'
+    compile 'com.parse.bolts:bolts-android:1.4.0'
+    compile 'com.parse:parse-android:1.13.1'
     testCompile 'junit:junit:4.12'
 }

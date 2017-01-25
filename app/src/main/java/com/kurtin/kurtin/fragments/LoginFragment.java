@@ -17,15 +17,22 @@ import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.kurtin.kurtin.R;
 import com.kurtin.kurtin.clients.InstagramClient;
 import com.kurtin.kurtin.clients.TwitterClient;
+import com.kurtin.kurtin.models.KurtinUser;
+import com.loopj.android.http.JsonHttpResponseHandler;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 
 /**
@@ -36,7 +43,8 @@ import java.util.List;
  */
 public class LoginFragment extends Fragment {
 
-    private final String TAG = "LoginFragment";
+    public final String TAG = "LoginFragment";
+
     private final List<String> FACEBOOK_PERMISSIONS =
             new ArrayList<String>(){{
                 add("email"); add("public_profile"); add("user_photos");}};
@@ -47,12 +55,19 @@ public class LoginFragment extends Fragment {
     private Button btnFacebookLogIn;
     private Button btnFacebookLogOut;
     private Button btnFacebookAccessToken;
+    private Button btnFacebookMe;
     private Button btnTwitterLogIn;
     private Button btnTwitterLogOut;
     private Button btnTwitterAccessToken;
+    private Button btnTwitterMe;
     private Button btnInstagramLogIn;
     private Button btnInstagramLogOut;
     private Button btnInstagramAccessToken;
+    private Button btnInstagramMe;
+    private Button btnKLogFb;
+    private Button btnKLogTw;
+    private Button btnKLogIg;
+    private Button btnGoToTest;
     private LoginButton btnFacebook;
 
     private CallbackManager mCallbackManager;
@@ -115,18 +130,25 @@ public class LoginFragment extends Fragment {
         btnFacebookLogIn = (Button) mParentView.findViewById(R.id.btnFacebookLogIn);
         btnFacebookLogOut = (Button) mParentView.findViewById(R.id.btnFacebookLogOut);
         btnFacebookAccessToken = (Button) mParentView.findViewById(R.id.btnFacebookAccessToken);
+        btnFacebookMe = (Button) mParentView.findViewById(R.id.btnFacebookMe);
         btnTwitterLogIn = (Button) mParentView.findViewById(R.id.btnTwitterLogIn);
         btnTwitterLogOut = (Button) mParentView.findViewById(R.id.btnTwitterLogOut);
         btnTwitterAccessToken = (Button) mParentView.findViewById(R.id.btnTwitterAccessToken);
+        btnTwitterMe = (Button) mParentView.findViewById(R.id.btnTwitterMe);
         btnInstagramLogIn = (Button) mParentView.findViewById(R.id.btnInstagramLogIn);
         btnInstagramLogOut = (Button) mParentView.findViewById(R.id.btnInstagramLogOut);
         btnInstagramAccessToken = (Button) mParentView.findViewById(R.id.btnInstagramAccessToken);
+        btnInstagramMe = (Button) mParentView.findViewById(R.id.btnInstagramMe);
+        btnKLogFb = (Button) mParentView.findViewById(R.id.btnKLogFB);
+        btnKLogTw = (Button) mParentView.findViewById(R.id.btnKLogTW);
+        btnKLogIg = (Button) mParentView.findViewById(R.id.btnKLogIG);
+        btnGoToTest = (Button) mParentView.findViewById(R.id.btnGoToTest);
 
         setupDefaultFbButton();
     }
 
     private void initializations(){
-        FacebookSdk.sdkInitialize(getContext().getApplicationContext());
+//        FacebookSdk.sdkInitialize(getContext().getApplicationContext());
         mCallbackManager = CallbackManager.Factory.create();
         LoginManager.getInstance().registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
             @Override
@@ -152,7 +174,12 @@ public class LoginFragment extends Fragment {
         btnFacebookLogIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LoginManager.getInstance().logInWithReadPermissions(mThisLoginFragment, FACEBOOK_PERMISSIONS);
+//                LoginManager.getInstance().logInWithReadPermissions(mThisLoginFragment, FACEBOOK_PERMISSIONS);
+                if(mListener != null){
+                    mListener.onAuthenticationRequested(KurtinUser.AuthenticationPlatform.FACEBOOK);
+                }else{
+                    Log.e(TAG, "Must implement LoginFragmentListener");
+                }
             }
         });
 
@@ -175,11 +202,31 @@ public class LoginFragment extends Fragment {
             }
         });
 
+        btnFacebookMe.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                GraphRequest graphRequest = GraphRequest.newMeRequest(AccessToken.getCurrentAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
+                    @Override
+                    public void onCompleted(JSONObject object, GraphResponse response) {
+                        Log.v(TAG, "Me object: " + object);
+                        Log.v(TAG, "Me response: " + response.toString());
+//                        Log.v(TAG, "Me response error: " + response.getError());
+//                        Log.v(TAG, "Me response connection: " + response.getConnection());
+//                        Log.v(TAG, "Me response raw response: " + response.getRawResponse());
+                    }
+                });
+                Bundle parameters = new Bundle();
+                parameters.putString("fields", "id, name, first_name, last_name, link, email, location, third_party_id");
+                graphRequest.setParameters(parameters);
+                graphRequest.executeAsync();
+            }
+        });
+
         btnTwitterLogIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(mListener != null){
-                    mListener.onTwitterLoginRequested();
+                    mListener.onAuthenticationRequested(KurtinUser.AuthenticationPlatform.TWITTER);
                 }else{
                     Log.e(TAG, "Must implement LoginFragmentListener");
                 }
@@ -205,11 +252,32 @@ public class LoginFragment extends Fragment {
             }
         });
 
+        btnTwitterMe.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TwitterClient.getCurrentUser(getContext(), new JsonHttpResponseHandler(){
+                    @Override
+                    public void onSuccess(
+                            int statusCode, cz.msebera.android.httpclient.Header[] headers,
+                            org.json.JSONObject response){
+                        Log.v(TAG, "Success response: " + response.toString());
+                    }
+
+                    @Override
+                    public void onFailure(
+                            int statusCode, cz.msebera.android.httpclient.Header[] headers,
+                            java.lang.Throwable throwable, org.json.JSONObject errorResponse){
+                        Log.v(TAG, "Failure errorResponse: " + errorResponse.toString());
+                    }
+                });
+            }
+        });
+
         btnInstagramLogIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(mListener != null){
-                    mListener.onInstagramLoginRequested();
+                    mListener.onAuthenticationRequested(KurtinUser.AuthenticationPlatform.INSTAGRAM);
                 }else{
                     Log.e(TAG, "Must implement LoginFragmentListener");
                 }
@@ -232,6 +300,28 @@ public class LoginFragment extends Fragment {
             public void onClick(View v) {
                 String string = InstagramLoginFragment.getTokenInfo(getContext());
                 Toast.makeText(getContext(), "Instagram Token: " + string, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        btnKLogFb.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mListener != null){
+                    mListener.onKurtinLoginRequested(KurtinUser.AuthenticationPlatform.FACEBOOK);
+                }else{
+                    Log.e(TAG, "Must implement LoginFragmentListener");
+                }
+            }
+        });
+
+        btnGoToTest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mListener != null){
+                    mListener.onTestRequested();
+                }else{
+                    Log.e(TAG, "Must implement LoginFragmentListener");
+                }
             }
         });
     }
@@ -280,7 +370,12 @@ public class LoginFragment extends Fragment {
     public interface LoginFragmentListener {
         // TODO: Update argument type and name
         //void onFragmentInteraction(Uri uri);
-        void onTwitterLoginRequested();
-        void onInstagramLoginRequested();
+//        void onTwitterLoginRequested();
+//        void onInstagramLoginRequested();
+//        void onFacebookLoginRequested();
+        void onKurtinLoginRequested(KurtinUser.AuthenticationPlatform platform);
+        void onAuthenticationRequested(KurtinUser.AuthenticationPlatform platform);
+
+        void onTestRequested();
     }
 }

@@ -15,16 +15,18 @@ import com.kurtin.kurtin.R;
 import com.kurtin.kurtin.clients.InstagramClient;
 import com.kurtin.kurtin.clients.TwitterClient;
 import com.kurtin.kurtin.listeners.AuthenticationListener;
+import com.kurtin.kurtin.models.KurtinUser;
 
 import org.scribe.model.Token;
 
+import static com.kurtin.kurtin.models.KurtinUser.AuthenticationPlatform.INSTAGRAM;
 import static java.lang.Boolean.getBoolean;
 
 
 public class InstagramLoginFragment extends OAuthLoginFragment<InstagramClient> {
 
     public static final String TAG = "InstagramLoginFragment";
-    public static final AuthenticationListener.Platform PLATFORM = AuthenticationListener.Platform.INSTAGRAM;
+    public static final KurtinUser.AuthenticationPlatform PLATFORM = KurtinUser.AuthenticationPlatform.INSTAGRAM;
 
     private static final String LOGIN_IN_PROGRESS = "loginInProgress";
 

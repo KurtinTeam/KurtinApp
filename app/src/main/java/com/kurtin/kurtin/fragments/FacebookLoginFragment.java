@@ -1,49 +1,84 @@
 package com.kurtin.kurtin.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.FacebookRequestError;
+import com.facebook.FacebookSdk;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
 import com.kurtin.kurtin.R;
+import com.kurtin.kurtin.listeners.AuthenticationListener;
+import com.kurtin.kurtin.models.FacebookUser;
+import com.kurtin.kurtin.models.KurtinUser;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link FacebookLoginFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- */
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.facebook.GraphRequest.TAG;
+
 public class FacebookLoginFragment extends Fragment {
 
-    private OnFragmentInteractionListener mListener;
+    public static final String TAG = "FacebookLoginFragment";
+
+    private final List<String> FACEBOOK_PERMISSIONS =
+            new ArrayList<String>(){{
+                add("email"); add("public_profile"); add("user_photos");}};
+
+    private CallbackManager mCallbackManager;
+    private FacebookLoginFragment mThisLoginFragment;
+    private boolean mFacebookIsPrimaryLogin;
+
+    private AuthenticationListener mListener;
 
     public FacebookLoginFragment() {
         // Required empty public constructor
+    }
+
+    public static FacebookLoginFragment newInstance(boolean facebookIsPrimaryLogin) {
+
+        Bundle args = new Bundle();
+        args.putBoolean(KurtinUser.IS_PRIMARY_LOGIN_KEY, facebookIsPrimaryLogin);
+        FacebookLoginFragment fragment = new FacebookLoginFragment();
+        fragment.setArguments(args);
+        return fragment;
     }
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        initialize();
+        logIn();
+
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_facebook_login, container, false);
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        mCallbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
+        if (context instanceof AuthenticationListener) {
+            mListener = (AuthenticationListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -56,18 +91,46 @@ public class FacebookLoginFragment extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+    private void initialize(){
+        FacebookSdk.sdkInitialize(getContext().getApplicationContext());
+        mCallbackManager = CallbackManager.Factory.create();
+        LoginManager.getInstance().registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                Log.v(TAG, "Login successful: " + loginResult.getAccessToken().toString());
+
+                if(mFacebookIsPrimaryLogin){
+                    KurtinUser.logInToKurtin(KurtinUser.AuthenticationPlatform.FACEBOOK, new KurtinUser.KurtinLoginCallback() {
+                        @Override
+                        public void loginResult(String result) {
+                            Log.v(TAG, "Result of fb primary login: " + result);
+                        }
+                    });
+                }
+
+                if (mListener != null){
+                    mListener.onAuthenticationCompleted(KurtinUser.AuthenticationPlatform.FACEBOOK);
+                }else{
+                    Log.e(TAG, "Must implement AuthenticationListener");
+                }
+            }
+
+            @Override
+            public void onCancel() {
+                Log.v(TAG, "Login cancelled");
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+                Log.v(TAG, "Login error");
+                error.printStackTrace();
+            }
+        });
+        mThisLoginFragment = this;
+        mFacebookIsPrimaryLogin = getArguments().getBoolean(KurtinUser.IS_PRIMARY_LOGIN_KEY);
+    }
+
+    private void logIn(){
+        LoginManager.getInstance().logInWithReadPermissions(mThisLoginFragment, FACEBOOK_PERMISSIONS);
     }
 }

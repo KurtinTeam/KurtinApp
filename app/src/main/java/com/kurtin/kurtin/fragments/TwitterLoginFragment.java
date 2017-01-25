@@ -16,6 +16,7 @@ import com.codepath.oauth.OAuthLoginFragment;
 import com.kurtin.kurtin.R;
 import com.kurtin.kurtin.clients.TwitterClient;
 import com.kurtin.kurtin.listeners.AuthenticationListener;
+import com.kurtin.kurtin.models.KurtinUser;
 
 import org.scribe.model.Token;
 
@@ -24,7 +25,7 @@ import org.scribe.model.Token;
 public class TwitterLoginFragment extends OAuthLoginFragment<TwitterClient> {
 
     public static final String TAG = "TwitterLoginFragment";
-    public static final AuthenticationListener.Platform PLATFORM = AuthenticationListener.Platform.TWITTER;
+    public static final KurtinUser.AuthenticationPlatform PLATFORM = KurtinUser.AuthenticationPlatform.TWITTER;
 
     private static final String LOGIN_IN_PROGRESS = "loginInProgress";
 

@@ -1,16 +1,14 @@
 package com.kurtin.kurtin.listeners;
 
+import com.kurtin.kurtin.models.KurtinUser;
+
 /**
  * Created by cvar on 1/19/17.
  */
 
 public interface AuthenticationListener {
 
-    public enum Platform{
-        FACEBOOK, TWITTER, INSTAGRAM
-    }
-
-    public void onAuthenticationCompleted(Platform platform);
+    public void onAuthenticationCompleted(KurtinUser.AuthenticationPlatform platform);
 
     public Boolean loginInProgress();
 

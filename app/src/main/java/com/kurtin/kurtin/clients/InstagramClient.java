@@ -9,6 +9,9 @@ import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import org.scribe.builder.api.Api;
 import org.scribe.builder.api.TwitterApi;
+import org.scribe.model.Token;
+
+import static com.kurtin.kurtin.helpers.JsonHelper.TAG;
 
 /**
  * Created by cvar on 1/19/17.
@@ -50,6 +53,19 @@ public class InstagramClient extends OAuthBaseClient {
     public void getMyInfo(AsyncHttpResponseHandler handler) {
         String apiUrl = getApiUrl("account/verify_credentials.json");
         client.get(apiUrl, null, handler);
+    }
+
+    //Returns null if there is no token
+    public static String getToken(Context context){
+        Token token = InstagramClient.getInstance(InstagramClient.class, context).checkAccessToken();
+        String string;
+        if(token != null){
+            string = token.getToken();
+        }else{
+            string = null;
+        }
+        Log.v(TAG, "Token: " + string);
+        return string;
     }
 
 }
