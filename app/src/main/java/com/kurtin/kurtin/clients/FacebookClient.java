@@ -42,7 +42,7 @@ public class FacebookClient {
     }
 
     //Returns null if there is no token
-    public static String getToken(Context context){
+    public static String getAccessToken(Context context){
         AccessToken accessToken = AccessToken.getCurrentAccessToken();
         String string;
         if(accessToken != null){

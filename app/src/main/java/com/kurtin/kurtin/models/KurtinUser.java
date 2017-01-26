@@ -1,11 +1,13 @@
 package com.kurtin.kurtin.models;
 
 
+import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
 import com.facebook.FacebookRequestError;
+import com.kurtin.kurtin.clients.TwitterClient;
 import com.kurtin.kurtin.helpers.SecureIdGenerator;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
@@ -27,6 +29,8 @@ public class KurtinUser {
 
     public static final String TAG = "KurtinUser";
     public static final String IS_PRIMARY_LOGIN_KEY = "isPrimaryLoginKey";
+    public static final String PRIMARY_LOGIN_KEY = "primaryLoginKey";
+    public static final String NOT_AVAILABLE = "notAvailable";
 
     private String mUsername;
     private String mPassword;
@@ -46,6 +50,42 @@ public class KurtinUser {
         mPrimaryToken = AccessToken.getCurrentAccessToken().getToken();
     }
 
+    public KurtinUser(TwitterUser twitterUser){
+        mEmail = "NotAvailable@kurtin.herokuapp.com";
+        mAuthenticationPlatform = AuthenticationPlatform.TWITTER;
+        mPlatformId = twitterUser.getTwitterId();
+        mNickName = twitterUser.getScreenName();
+        mUsername = mAuthenticationPlatform.toString() + mPlatformId;
+        mPassword = SecureIdGenerator.getGenerator().nextId();
+        //TODO: get the access token from shared preferences. or require a context for this flow to retrieve the access token from the TwitterClient
+//        mPrimaryToken = TwitterClient.getAccessToken();
+    }
+
+    public KurtinUser(InstagramUser instagramUser){
+        mEmail = "NotAvailable@kurtin.herokuapp.com";
+        mAuthenticationPlatform = AuthenticationPlatform.INSTAGRAM;
+        mPlatformId = instagramUser.getInstagramId();
+        mNickName = instagramUser.getUsername();
+        mUsername = mAuthenticationPlatform.toString() + mPlatformId;
+        mPassword = SecureIdGenerator.getGenerator().nextId();
+        //TODO: get the access token from shared preferences. or require a context for this flow to retrieve the access token from the TwitterClient
+//        mPrimaryToken = TwitterClient.getAccessToken();
+    }
+
+    public static void logInToKurtin(Context context, AuthenticationPlatform platform, KurtinLoginCallback callback){
+        switch (platform){
+            case FACEBOOK:
+                KurtinLoginViaFacebookAsync(callback);
+                break;
+            case TWITTER:
+                KurtinLoginViaTwitterAsync(context, callback);
+                break;
+            case INSTAGRAM:
+                KurtinLoginViaInstagramAsync(context, callback);
+                break;
+        }
+    }
+
     private static void KurtinLoginViaFacebookAsync(final KurtinLoginCallback callback){
         FacebookUser.getCurrentUser(new FacebookUser.FacebookUserCallback() {
             @Override
@@ -62,16 +102,36 @@ public class KurtinUser {
         });
     }
 
-    public static void logInToKurtin(AuthenticationPlatform platform, KurtinLoginCallback callback){
-        switch (platform){
-            case FACEBOOK:
-                KurtinLoginViaFacebookAsync(callback);
-                break;
-            case TWITTER:
-                break;
-            case INSTAGRAM:
-                break;
-        }
+    private static void KurtinLoginViaTwitterAsync(Context context, final KurtinLoginCallback callback){
+        TwitterUser.getCurrentUser(context, new TwitterUser.TwitterUserCallback() {
+            @Override
+            public void onSuccess(TwitterUser twitterUser) {
+                KurtinUser kurtinUser = new KurtinUser(twitterUser);
+                kurtinUser.logInToKurtin(callback);
+                //TODO: save kurtinUser to shared prefs
+            }
+
+            @Override
+            public void onFailure(String errorString) {
+                callback.loginResult(errorString);
+            }
+        });
+    }
+
+    private static void KurtinLoginViaInstagramAsync(Context context, final KurtinLoginCallback callback){
+        InstagramUser.getCurrentUser(context, new InstagramUser.InstagramUserCallback() {
+            @Override
+            public void onSuccess(InstagramUser instagramUser) {
+                KurtinUser kurtinUser = new KurtinUser(instagramUser);
+                kurtinUser.logInToKurtin(callback);
+                //TODO: save kurtinUser to shared prefs
+            }
+
+            @Override
+            public void onFailure(String errorString) {
+                callback.loginResult(errorString);
+            }
+        });
     }
 
     private void logInToKurtin(final KurtinLoginCallback callback){
@@ -131,6 +191,25 @@ public class KurtinUser {
 
     public enum AuthenticationPlatform{
         FACEBOOK, TWITTER, INSTAGRAM;
+
+        public static AuthenticationPlatform getPlatformFromString(String platformString){
+            switch (platformString) {
+                case "FACEBOOK":
+                    return FACEBOOK;
+                case "TWITTER":
+                    return TWITTER;
+                case "INSTAGRAM":
+                    return INSTAGRAM;
+                default:
+                    return null;
+            }
+        }
+    }
+
+    public static final class AuthenticationPlatformStrings{
+        public static String FACEBOOK = AuthenticationPlatform.FACEBOOK.toString();
+        public static String TWITTER = AuthenticationPlatform.TWITTER.toString();
+        public static String INSTAGRAM = AuthenticationPlatform.INSTAGRAM.toString();
     }
 
     public class ParseUserKeys{

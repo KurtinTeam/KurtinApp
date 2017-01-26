@@ -1,15 +1,11 @@
 package com.kurtin.kurtin.fragments;
 
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.Toast;
 
 import com.codepath.oauth.OAuthLoginFragment;
@@ -17,6 +13,7 @@ import com.kurtin.kurtin.R;
 import com.kurtin.kurtin.clients.TwitterClient;
 import com.kurtin.kurtin.listeners.AuthenticationListener;
 import com.kurtin.kurtin.models.KurtinUser;
+import com.kurtin.kurtin.persistence.LoginPreferences;
 
 import org.scribe.model.Token;
 
@@ -25,21 +22,23 @@ import org.scribe.model.Token;
 public class TwitterLoginFragment extends OAuthLoginFragment<TwitterClient> {
 
     public static final String TAG = "TwitterLoginFragment";
-    public static final KurtinUser.AuthenticationPlatform PLATFORM = KurtinUser.AuthenticationPlatform.TWITTER;
+    public static final KurtinUser.AuthenticationPlatform TWITTER = KurtinUser.AuthenticationPlatform.TWITTER;
 
     private static final String LOGIN_IN_PROGRESS = "loginInProgress";
 
+    private boolean mTwitterIsPrimaryLogin;
+
     AuthenticationListener mListener;
 
-    public static TwitterLoginFragment newInstance() {
-
-        Bundle args = new Bundle();
-        args.putBoolean(LOGIN_IN_PROGRESS, false);
-
-        TwitterLoginFragment fragment = new TwitterLoginFragment();
-        fragment.setArguments(args);
-        return fragment;
-    }
+//    public static TwitterLoginFragment newInstance() {
+//
+//        Bundle args = new Bundle();
+//        args.putBoolean(LOGIN_IN_PROGRESS, false);
+//
+//        TwitterLoginFragment fragment = new TwitterLoginFragment();
+//        fragment.setArguments(args);
+//        return fragment;
+//    }
 
     public static TwitterLoginFragment newInstance(Boolean loginInProgress) {
 
@@ -53,6 +52,7 @@ public class TwitterLoginFragment extends OAuthLoginFragment<TwitterClient> {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        initialize();
         return inflater.inflate(R.layout.fragment_twitter_login, container, false);
     }
 
@@ -91,13 +91,29 @@ public class TwitterLoginFragment extends OAuthLoginFragment<TwitterClient> {
 //        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
 //        startActivity(i);
         showTokenInfo();
-        mListener.onAuthenticationCompleted(PLATFORM);
+
+        if(mTwitterIsPrimaryLogin){
+            KurtinUser.logInToKurtin(getContext(), TWITTER, new KurtinUser.KurtinLoginCallback() {
+                @Override
+                public void loginResult(String result) {
+                    Log.v(TAG, "Result of twitter primary login: " + result);
+                }
+            });
+        }
+
+        mListener.onAuthenticationCompleted(TWITTER);
     }
 
     @Override
     public void onLoginFailure(Exception e) {
         // fires if twitter authentication fails
         e.printStackTrace();
+    }
+
+    private void initialize(){
+        mTwitterIsPrimaryLogin =
+                LoginPreferences.getPrimaryKurtinLoginPlatform(getContext())
+                        .equals(KurtinUser.AuthenticationPlatform.TWITTER);
     }
 
     private void authenticate(){

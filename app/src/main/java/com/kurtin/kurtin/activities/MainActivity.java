@@ -20,6 +20,7 @@ import com.kurtin.kurtin.fragments.TestFragment;
 import com.kurtin.kurtin.fragments.TwitterLoginFragment;
 import com.kurtin.kurtin.listeners.AuthenticationListener;
 import com.kurtin.kurtin.models.KurtinUser;
+import com.kurtin.kurtin.persistence.LoginPreferences;
 
 
 public class MainActivity extends AppCompatActivity implements
@@ -124,17 +125,21 @@ public class MainActivity extends AppCompatActivity implements
     //LoginFragment.Listener
     @Override
     public void onKurtinLoginRequested(KurtinUser.AuthenticationPlatform platform){
+        //Save primary login platform data
+        LoginPreferences.setPrimaryKurtinLoginPlatform(this, platform);
+
+        boolean loginIsInProgress = false;
         switch (platform){
             case FACEBOOK:
-                FacebookLoginFragment facebookLoginFragment = FacebookLoginFragment.newInstance(true);
+                FacebookLoginFragment facebookLoginFragment = FacebookLoginFragment.newInstance();
                 showFragment(facebookLoginFragment, FacebookLoginFragment.TAG, false);
                 break;
             case TWITTER:
-                TwitterLoginFragment twitterLoginFragment = TwitterLoginFragment.newInstance(true);
+                TwitterLoginFragment twitterLoginFragment = TwitterLoginFragment.newInstance(loginIsInProgress);
                 showFragment(twitterLoginFragment, TwitterLoginFragment.TAG, false);
                 break;
             case INSTAGRAM:
-                InstagramLoginFragment instagramLoginFragment = InstagramLoginFragment.newInstance(true);
+                InstagramLoginFragment instagramLoginFragment = InstagramLoginFragment.newInstance(loginIsInProgress);
                 showFragment(instagramLoginFragment, InstagramLoginFragment.TAG, false);
                 break;
         }
@@ -142,17 +147,18 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onAuthenticationRequested(KurtinUser.AuthenticationPlatform platform){
+        boolean loginIsInProgress = false;
         switch (platform){
             case FACEBOOK:
-                FacebookLoginFragment facebookLoginFragment = FacebookLoginFragment.newInstance(false);
+                FacebookLoginFragment facebookLoginFragment = FacebookLoginFragment.newInstance();
                 showFragment(facebookLoginFragment, FacebookLoginFragment.TAG, false);
                 break;
             case TWITTER:
-                TwitterLoginFragment twitterLoginFragment = TwitterLoginFragment.newInstance(false);
+                TwitterLoginFragment twitterLoginFragment = TwitterLoginFragment.newInstance(loginIsInProgress);
                 showFragment(twitterLoginFragment, TwitterLoginFragment.TAG, false);
                 break;
             case INSTAGRAM:
-                InstagramLoginFragment instagramLoginFragment = InstagramLoginFragment.newInstance(false);
+                InstagramLoginFragment instagramLoginFragment = InstagramLoginFragment.newInstance(loginIsInProgress);
                 showFragment(instagramLoginFragment, InstagramLoginFragment.TAG, false);
                 break;
         }

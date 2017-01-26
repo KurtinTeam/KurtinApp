@@ -16,19 +16,20 @@ import com.kurtin.kurtin.clients.InstagramClient;
 import com.kurtin.kurtin.clients.TwitterClient;
 import com.kurtin.kurtin.listeners.AuthenticationListener;
 import com.kurtin.kurtin.models.KurtinUser;
+import com.kurtin.kurtin.persistence.LoginPreferences;
 
 import org.scribe.model.Token;
 
-import static com.kurtin.kurtin.models.KurtinUser.AuthenticationPlatform.INSTAGRAM;
-import static java.lang.Boolean.getBoolean;
 
 
 public class InstagramLoginFragment extends OAuthLoginFragment<InstagramClient> {
 
     public static final String TAG = "InstagramLoginFragment";
-    public static final KurtinUser.AuthenticationPlatform PLATFORM = KurtinUser.AuthenticationPlatform.INSTAGRAM;
+    public static final KurtinUser.AuthenticationPlatform INSTAGRAM = KurtinUser.AuthenticationPlatform.INSTAGRAM;
 
     private static final String LOGIN_IN_PROGRESS = "loginInProgress";
+
+    boolean mInstagramIsPrimaryLogin;
 
     AuthenticationListener mListener;
 
@@ -54,6 +55,7 @@ public class InstagramLoginFragment extends OAuthLoginFragment<InstagramClient> 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        initialize();
         return inflater.inflate(R.layout.fragment_instagram_login, container, false);
     }
 
@@ -93,13 +95,29 @@ public class InstagramLoginFragment extends OAuthLoginFragment<InstagramClient> 
     public void onLoginSuccess() {
         // fires if authentication succeeds
         showTokenInfo();
-        mListener.onAuthenticationCompleted(PLATFORM);
+
+
+        if(mInstagramIsPrimaryLogin){
+            KurtinUser.logInToKurtin(getContext(), INSTAGRAM, new KurtinUser.KurtinLoginCallback() {
+                @Override
+                public void loginResult(String result) {
+                    Log.v(TAG, "Result of twitter primary login: " + result);
+                }
+            });
+        }
+
+        mListener.onAuthenticationCompleted(INSTAGRAM);
     }
 
     @Override
     public void onLoginFailure(Exception e) {
         // fires if authentication fails
         e.printStackTrace();
+    }
+
+    private void initialize(){
+        mInstagramIsPrimaryLogin =
+                LoginPreferences.getPrimaryKurtinLoginPlatform(getContext()).equals(KurtinUser.AuthenticationPlatform.INSTAGRAM);
     }
 
     private void authenticate(){

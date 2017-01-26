@@ -64,7 +64,7 @@ public class TwitterClient extends OAuthBaseClient {
     }
 
     //Returns null if there is no token
-    public static String getToken(Context context){
+    public static String getAccessToken(Context context){
         Token token = TwitterClient.getInstance(TwitterClient.class, context).checkAccessToken();
         String string;
         if(token != null){

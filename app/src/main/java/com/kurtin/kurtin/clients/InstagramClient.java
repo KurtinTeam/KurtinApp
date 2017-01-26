@@ -51,12 +51,22 @@ public class InstagramClient extends OAuthBaseClient {
     }
 
     public void getMyInfo(AsyncHttpResponseHandler handler) {
-        String apiUrl = getApiUrl("account/verify_credentials.json");
+        String apiUrl = getApiUrl("users/self");
+        client.get(apiUrl, null, handler);
+    }
+
+    //My functions
+    public static void getCurrentUser(Context context, AsyncHttpResponseHandler handler){
+        ((InstagramClient) InstagramClient.getInstance(InstagramClient.class, context)).getMe(handler);
+    }
+
+    public void getMe(AsyncHttpResponseHandler handler) {
+        String apiUrl = getApiUrl("users/self");
         client.get(apiUrl, null, handler);
     }
 
     //Returns null if there is no token
-    public static String getToken(Context context){
+    public static String getAccessToken(Context context){
         Token token = InstagramClient.getInstance(InstagramClient.class, context).checkAccessToken();
         String string;
         if(token != null){

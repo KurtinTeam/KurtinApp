@@ -2,38 +2,31 @@ package com.kurtin.kurtin.fragments;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
-import com.facebook.FacebookRequestError;
-import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.kurtin.kurtin.R;
 import com.kurtin.kurtin.listeners.AuthenticationListener;
-import com.kurtin.kurtin.models.FacebookUser;
 import com.kurtin.kurtin.models.KurtinUser;
-
-import org.json.JSONObject;
+import com.kurtin.kurtin.persistence.LoginPreferences;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.facebook.GraphRequest.TAG;
 
 public class FacebookLoginFragment extends Fragment {
 
     public static final String TAG = "FacebookLoginFragment";
 
+    private static final KurtinUser.AuthenticationPlatform FACEBOOK = KurtinUser.AuthenticationPlatform.FACEBOOK;
     private final List<String> FACEBOOK_PERMISSIONS =
             new ArrayList<String>(){{
                 add("email"); add("public_profile"); add("user_photos");}};
@@ -48,14 +41,23 @@ public class FacebookLoginFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static FacebookLoginFragment newInstance(boolean facebookIsPrimaryLogin) {
+    public static FacebookLoginFragment newInstance() {
 
         Bundle args = new Bundle();
-        args.putBoolean(KurtinUser.IS_PRIMARY_LOGIN_KEY, facebookIsPrimaryLogin);
+
         FacebookLoginFragment fragment = new FacebookLoginFragment();
         fragment.setArguments(args);
         return fragment;
     }
+
+//    public static FacebookLoginFragment newInstance(boolean facebookIsPrimaryLogin) {
+//
+//        Bundle args = new Bundle();
+//        args.putBoolean(KurtinUser.IS_PRIMARY_LOGIN_KEY, facebookIsPrimaryLogin);
+//        FacebookLoginFragment fragment = new FacebookLoginFragment();
+//        fragment.setArguments(args);
+//        return fragment;
+//    }
 
 
     @Override
@@ -92,7 +94,7 @@ public class FacebookLoginFragment extends Fragment {
     }
 
     private void initialize(){
-        FacebookSdk.sdkInitialize(getContext().getApplicationContext());
+//        FacebookSdk.sdkInitialize(getContext().getApplicationContext());
         mCallbackManager = CallbackManager.Factory.create();
         LoginManager.getInstance().registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
             @Override
@@ -100,7 +102,7 @@ public class FacebookLoginFragment extends Fragment {
                 Log.v(TAG, "Login successful: " + loginResult.getAccessToken().toString());
 
                 if(mFacebookIsPrimaryLogin){
-                    KurtinUser.logInToKurtin(KurtinUser.AuthenticationPlatform.FACEBOOK, new KurtinUser.KurtinLoginCallback() {
+                    KurtinUser.logInToKurtin(getContext(), FACEBOOK, new KurtinUser.KurtinLoginCallback() {
                         @Override
                         public void loginResult(String result) {
                             Log.v(TAG, "Result of fb primary login: " + result);
@@ -109,7 +111,7 @@ public class FacebookLoginFragment extends Fragment {
                 }
 
                 if (mListener != null){
-                    mListener.onAuthenticationCompleted(KurtinUser.AuthenticationPlatform.FACEBOOK);
+                    mListener.onAuthenticationCompleted(FACEBOOK);
                 }else{
                     Log.e(TAG, "Must implement AuthenticationListener");
                 }
@@ -127,7 +129,9 @@ public class FacebookLoginFragment extends Fragment {
             }
         });
         mThisLoginFragment = this;
-        mFacebookIsPrimaryLogin = getArguments().getBoolean(KurtinUser.IS_PRIMARY_LOGIN_KEY);
+        mFacebookIsPrimaryLogin =
+                LoginPreferences.getPrimaryKurtinLoginPlatform(getContext())
+                        .equals(KurtinUser.AuthenticationPlatform.FACEBOOK);
     }
 
     private void logIn(){

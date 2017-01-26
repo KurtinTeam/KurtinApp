@@ -303,11 +303,54 @@ public class LoginFragment extends Fragment {
             }
         });
 
+        btnInstagramMe.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                InstagramClient.getCurrentUser(getContext(), new JsonHttpResponseHandler(){
+                    @Override
+                    public void onSuccess(
+                            int statusCode, cz.msebera.android.httpclient.Header[] headers,
+                            org.json.JSONObject response){
+                        Log.v(TAG, "Success response: " + response.toString());
+                    }
+
+                    @Override
+                    public void onFailure(
+                            int statusCode, cz.msebera.android.httpclient.Header[] headers,
+                            java.lang.Throwable throwable, org.json.JSONObject errorResponse){
+                        Log.v(TAG, "Failure errorResponse: " + errorResponse.toString());
+                    }
+                });
+            }
+        });
+
         btnKLogFb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(mListener != null){
                     mListener.onKurtinLoginRequested(KurtinUser.AuthenticationPlatform.FACEBOOK);
+                }else{
+                    Log.e(TAG, "Must implement LoginFragmentListener");
+                }
+            }
+        });
+
+        btnKLogTw.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mListener != null){
+                    mListener.onKurtinLoginRequested(KurtinUser.AuthenticationPlatform.TWITTER);
+                }else{
+                    Log.e(TAG, "Must implement LoginFragmentListener");
+                }
+            }
+        });
+
+        btnKLogIg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mListener != null){
+                    mListener.onKurtinLoginRequested(KurtinUser.AuthenticationPlatform.INSTAGRAM);
                 }else{
                     Log.e(TAG, "Must implement LoginFragmentListener");
                 }
