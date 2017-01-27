@@ -255,7 +255,7 @@ public class LoginFragment extends Fragment {
         btnTwitterMe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TwitterClient.getCurrentUser(getContext(), new JsonHttpResponseHandler(){
+                TwitterClient.getSharedInstance(getContext()).getCurrentUser(getContext(), new JsonHttpResponseHandler(){
                     @Override
                     public void onSuccess(
                             int statusCode, cz.msebera.android.httpclient.Header[] headers,
@@ -306,7 +306,7 @@ public class LoginFragment extends Fragment {
         btnInstagramMe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                InstagramClient.getCurrentUser(getContext(), new JsonHttpResponseHandler(){
+                InstagramClient.getSharedInstance(getContext()).getCurrentUser(getContext(), new JsonHttpResponseHandler(){
                     @Override
                     public void onSuccess(
                             int statusCode, cz.msebera.android.httpclient.Header[] headers,

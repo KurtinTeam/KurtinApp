@@ -39,7 +39,7 @@ public class TwitterUser {
     }
 
     public static void getCurrentUser(Context context, final TwitterUser.TwitterUserCallback callback){
-        TwitterClient.getCurrentUser(context, new JsonHttpResponseHandler(){
+        TwitterClient.getSharedInstance(context).getCurrentUser(context, new JsonHttpResponseHandler(){
             @Override
             public void onSuccess(
                     int statusCode, cz.msebera.android.httpclient.Header[] headers,

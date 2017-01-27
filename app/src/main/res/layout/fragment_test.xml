@@ -10,4 +10,11 @@
         android:layout_height="wrap_content"
         android:text="parse"/>
 
+    <Button
+        android:id="@+id/btnFbApiTest"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnParseTest"
+        android:text="FB Api"/>
+
 </RelativeLayout>

@@ -45,7 +45,7 @@ public class InstagramUser {
     }
 
     public static void getCurrentUser(Context context, final InstagramUser.InstagramUserCallback callback){
-        InstagramClient.getCurrentUser(context, new JsonHttpResponseHandler(){
+        InstagramClient.getSharedInstance(context).getCurrentUser(context, new JsonHttpResponseHandler(){
             @Override
             public void onSuccess(
                     int statusCode, cz.msebera.android.httpclient.Header[] headers,

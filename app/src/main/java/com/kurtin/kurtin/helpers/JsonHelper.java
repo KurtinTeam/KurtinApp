@@ -2,9 +2,11 @@ package com.kurtin.kurtin.helpers;
 
 import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import static android.R.attr.key;
+import static android.R.attr.value;
 
 /**
  * Created by cvar on 1/24/17.
@@ -57,6 +59,17 @@ public class JsonHelper {
                 value.put("error", error);
                 return value;
             }
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public JSONArray getJsonArray(String key){
+        JSONArray array;
+        try{
+            array = mJsonObject.getJSONArray(key);
+            return array;
         }catch (Exception e){
             e.printStackTrace();
             return null;

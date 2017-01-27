@@ -35,7 +35,7 @@ public class FacebookUser {
     }
 
     public static void getCurrentUser(final FacebookUser.FacebookUserCallback callback){
-        FacebookClient.getCurrentUser(new FacebookClient.JsonCallback(){
+        FacebookClient.getSharedInstance().getCurrentUser(new FacebookClient.JsonCallback(){
             @Override
             public void onSuccess(JSONObject fbUserJsonObject) {
                 FacebookUser facebookUser = new FacebookUser(fbUserJsonObject);
