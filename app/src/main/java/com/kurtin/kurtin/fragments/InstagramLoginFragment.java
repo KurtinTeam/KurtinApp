@@ -15,7 +15,10 @@ import com.kurtin.kurtin.R;
 import com.kurtin.kurtin.clients.InstagramClient;
 import com.kurtin.kurtin.clients.TwitterClient;
 import com.kurtin.kurtin.listeners.AuthenticationListener;
+import com.kurtin.kurtin.models.AuthPlatform;
+import com.kurtin.kurtin.models.InstagramUser;
 import com.kurtin.kurtin.models.KurtinUser;
+import com.kurtin.kurtin.models.TwitterUser;
 import com.kurtin.kurtin.persistence.LoginPreferences;
 
 import org.scribe.model.Token;
@@ -25,7 +28,7 @@ import org.scribe.model.Token;
 public class InstagramLoginFragment extends OAuthLoginFragment<InstagramClient> {
 
     public static final String TAG = "InstagramLoginFragment";
-    public static final KurtinUser.AuthenticationPlatform INSTAGRAM = KurtinUser.AuthenticationPlatform.INSTAGRAM;
+    public static final AuthPlatform.PlatformType INSTAGRAM = AuthPlatform.PlatformType.INSTAGRAM;
 
     private static final String LOGIN_IN_PROGRESS = "loginInProgress";
 
@@ -104,6 +107,8 @@ public class InstagramLoginFragment extends OAuthLoginFragment<InstagramClient> 
                     Log.v(TAG, "Result of twitter primary login: " + result);
                 }
             });
+        }else{
+            InstagramUser.updateCurrentUserIdInSharedPreferences(getContext());
         }
 
         mListener.onAuthenticationCompleted(INSTAGRAM);
@@ -117,7 +122,7 @@ public class InstagramLoginFragment extends OAuthLoginFragment<InstagramClient> 
 
     private void initialize(){
         mInstagramIsPrimaryLogin =
-                LoginPreferences.getPrimaryKurtinLoginPlatform(getContext()).equals(KurtinUser.AuthenticationPlatform.INSTAGRAM);
+                LoginPreferences.getPrimaryKurtinLoginPlatformType(getContext()).equals(AuthPlatform.PlatformType.INSTAGRAM);
     }
 
     private void authenticate(){

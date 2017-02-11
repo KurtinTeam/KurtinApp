@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/rlOverview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/tvConnection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Connected" />
+        <!--android:gravity="end"-->
+
+        <TextView
+            android:id="@+id/tvPlatform"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableEnd="@drawable/ic_expand_more_black_24dp"
+            android:drawableLeft="@drawable/ic_account_box_black_24dp"
+            android:drawablePadding="8dp"
+            android:drawableRight="@drawable/ic_expand_more_black_24dp"
+            android:drawableStart="@drawable/ic_account_box_black_24dp"
+            android:gravity="bottom"
+            android:paddingTop="8dp"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:text="Platform"
+            android:textColor="@color/black"
+            android:textSize="@dimen/menu_main_text"
+            android:layout_below="@+id/tvConnection"
+            />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rlDetail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/rlOverview"
+        >
+        <!--android:visibility="gone"-->
+
+        <TextView
+            android:id="@+id/tvMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/status_authenticated"
+            android:textSize="@dimen/subtitle_text"
+            android:textColor="@color/kurtin_text_primary"
+            android:layout_centerHorizontal="true"
+            />
+
+        <TextView
+            android:id="@+id/tvMessageSubject"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Facebook"
+            android:textSize="@dimen/title_text"
+            android:textColor="@color/kurtin_text_primary"
+            android:textStyle="bold"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/tvMessage"
+            />
+
+        <Button
+            android:id="@+id/btnAuthAction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/disconnect"
+            android:textSize="@dimen/button_small_text"
+            android:textColor="@color/white"
+            android:background="@drawable/rounded_button"
+            android:layout_marginTop="16dp"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/tvMessageSubject"
+        />
+
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/divider_light"
+        android:layout_margin="8dp"
+        />
+    <!--android:layout_marginLeft="8dp"-->
+    <!--android:layout_marginStart="8dp"-->
+    <!--android:layout_marginRight="8dp"-->
+    <!--android:layout_marginEnd="8dp"-->
+    <!--android:layout_marginTop="8dp"-->
+
+
+</LinearLayout>

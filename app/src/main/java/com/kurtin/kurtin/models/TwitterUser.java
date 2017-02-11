@@ -7,6 +7,7 @@ import com.facebook.FacebookRequestError;
 import com.kurtin.kurtin.clients.FacebookClient;
 import com.kurtin.kurtin.clients.TwitterClient;
 import com.kurtin.kurtin.helpers.JsonHelper;
+import com.kurtin.kurtin.persistence.CurrentUserPreferences;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.json.JSONObject;
@@ -39,7 +40,7 @@ public class TwitterUser {
     }
 
     public static void getCurrentUser(Context context, final TwitterUser.TwitterUserCallback callback){
-        TwitterClient.getSharedInstance(context).getCurrentUser(context, new JsonHttpResponseHandler(){
+        TwitterClient.getSharedInstance(context).getCurrentUser(new JsonHttpResponseHandler(){
             @Override
             public void onSuccess(
                     int statusCode, cz.msebera.android.httpclient.Header[] headers,
@@ -55,6 +56,23 @@ public class TwitterUser {
                     java.lang.Throwable throwable, org.json.JSONObject errorResponse){
                 Log.v(TAG, "Failure errorResponse: " + errorResponse.toString());
                 callback.onFailure(errorResponse.toString());
+            }
+        });
+    }
+
+    public static void updateCurrentUserIdInSharedPreferences(final Context context) {
+        getCurrentUser(context, new TwitterUser.TwitterUserCallback() {
+            @Override
+            public void onSuccess(TwitterUser twitterUser) {
+                String twitterId = twitterUser.getTwitterId();
+                if(twitterId != null){
+                    CurrentUserPreferences.setTwitterId(context, twitterId);
+                }
+            }
+
+            @Override
+            public void onFailure(String errorString) {
+                Log.e(TAG, errorString);
             }
         });
     }

@@ -154,5 +154,21 @@
         android:layout_below="@+id/btnKLogFB"
         android:text="test"/>
 
+    <Button
+        android:id="@+id/btnGoToAuthManager"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnKLogFB"
+        android:layout_toRightOf="@id/btnGoToTest"
+        android:text="Auth Mgr"/>
+
+    <Button
+        android:id="@+id/btnGoToLoginFragment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnKLogFB"
+        android:layout_toRightOf="@id/btnGoToAuthManager"
+        android:text="Login Frag"/>
+
 
 </RelativeLayout>

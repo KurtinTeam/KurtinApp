@@ -1,0 +1,102 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.kurtin.kurtin.fragments.KurtinLoginFragment">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/black"
+        />
+
+    <!-- TODO: Update blank fragment layout -->
+    <ImageView
+        android:id="@+id/ivBanner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="100dp"
+        android:paddingRight="100dp"
+        android:src="@drawable/kurtin_logo_small" />
+
+    <TextView
+        android:id="@+id/tvSlogan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/slogan"
+        android:textColor="@color/white"
+        android:layout_below="@+id/ivBanner"
+        android:layout_centerHorizontal="true"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/login_slogan"
+        android:textColor="@color/white"
+        android:layout_above="@+id/btnFacebook"
+        android:textSize="16sp"
+        android:layout_marginBottom="8dp"
+        android:layout_centerHorizontal="true"
+        />
+
+    <Button
+        android:id="@+id/btnFacebook"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:background="@drawable/fb_btn_lg"
+        android:drawableLeft="@drawable/ic_fb"
+        android:drawablePadding="-16dp"
+        android:paddingLeft="16dp"
+        android:layout_above="@+id/btnTwitter"
+        android:layout_marginBottom="16dp"
+        android:text="@string/fb_login"
+        android:textColor="@color/white"
+        />
+
+    <Button
+        android:id="@+id/btnTwitter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:layout_above="@+id/btnInstagram"
+        android:background="@drawable/tw_btn_lg"
+        android:drawableLeft="@drawable/ic_twitter"
+        android:drawableStart="@drawable/ic_twitter"
+        android:drawablePadding="-16dp"
+        android:paddingLeft="16dp"
+        android:layout_marginBottom="16dp"
+        android:text="@string/tw_login"
+        android:textColor="@color/white"
+        />
+
+    <Button
+        android:id="@+id/btnInstagram"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:layout_above="@+id/vwBottomAnchor"
+        android:background="@drawable/ig_btn_lg"
+        android:drawableLeft="@drawable/ic_ig_glyph"
+        android:drawableStart="@drawable/ic_ig_glyph"
+        android:drawablePadding="-16dp"
+        android:paddingLeft="16dp"
+        android:layout_marginBottom="36dp"
+        android:text="@string/ig_login"
+        android:textColor="@color/white"
+        />
+
+    <View
+        android:id="@+id/vwBottomAnchor"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_alignParentBottom="true"
+        />
+
+
+
+</RelativeLayout>

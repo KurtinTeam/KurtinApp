@@ -5,29 +5,39 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 import com.kurtin.kurtin.R;
+import com.kurtin.kurtin.clients.FacebookClient;
 import com.kurtin.kurtin.clients.InstagramClient;
 import com.kurtin.kurtin.clients.TwitterClient;
+import com.kurtin.kurtin.fragments.AuthManagerFragment;
 import com.kurtin.kurtin.fragments.FacebookLoginFragment;
 import com.kurtin.kurtin.fragments.InstagramLoginFragment;
+import com.kurtin.kurtin.fragments.KurtinLoginFragment;
 import com.kurtin.kurtin.fragments.LoginFragment;
 import com.kurtin.kurtin.fragments.TestFragment;
 import com.kurtin.kurtin.fragments.TwitterLoginFragment;
 import com.kurtin.kurtin.listeners.AuthenticationListener;
+import com.kurtin.kurtin.listeners.KurtinNavListener;
+import com.kurtin.kurtin.models.AuthPlatform;
 import com.kurtin.kurtin.models.KurtinUser;
 import com.kurtin.kurtin.persistence.LoginPreferences;
 
 
 public class MainActivity extends AppCompatActivity implements
         LoginFragment.LoginFragmentListener,
-        AuthenticationListener{
+        AuthenticationListener,
+        KurtinNavListener{
 
     private static final String TAG = "MainActivity";
+
+    private static final Boolean FULL_SCREEN = true;
+    private static final Boolean REG_SCREEN = false;
 
     private FrameLayout flFragmentFrame;
     private FrameLayout flFragmentFrameFullScreen;
@@ -39,16 +49,17 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        FacebookSdk.sdkInitialize(getApplicationContext());
+        //Initialize a shared list of Authentication Platforms
+        KurtinUser.getUserPlatforms(this);
 
         flFragmentFrame = (FrameLayout) findViewById(R.id.flFragmentFrame);
         flFragmentFrameFullScreen = (FrameLayout) findViewById(R.id.flFragmentFrameFullScreen);
 
         mLoginInProgress = false;
 
-        //Facebook
-        FacebookSdk.sdkInitialize(getApplicationContext());
-        AppEventsLogger.activateApp(this);
+//        //Facebook
+//        FacebookSdk.sdkInitialize(getApplicationContext());
+//        AppEventsLogger.activateApp(this);
 
         showFirstFragment();
 
@@ -122,77 +133,113 @@ public class MainActivity extends AppCompatActivity implements
     //**
     //*
 
+    //TODO: Delete LoginFragment Listener
     //LoginFragment.Listener
-    @Override
-    public void onKurtinLoginRequested(KurtinUser.AuthenticationPlatform platform){
-        //Save primary login platform data
-        LoginPreferences.setPrimaryKurtinLoginPlatform(this, platform);
-
-        boolean loginIsInProgress = false;
-        switch (platform){
-            case FACEBOOK:
-                FacebookLoginFragment facebookLoginFragment = FacebookLoginFragment.newInstance();
-                showFragment(facebookLoginFragment, FacebookLoginFragment.TAG, false);
-                break;
-            case TWITTER:
-                TwitterLoginFragment twitterLoginFragment = TwitterLoginFragment.newInstance(loginIsInProgress);
-                showFragment(twitterLoginFragment, TwitterLoginFragment.TAG, false);
-                break;
-            case INSTAGRAM:
-                InstagramLoginFragment instagramLoginFragment = InstagramLoginFragment.newInstance(loginIsInProgress);
-                showFragment(instagramLoginFragment, InstagramLoginFragment.TAG, false);
-                break;
-        }
-    }
-
-    @Override
-    public void onAuthenticationRequested(KurtinUser.AuthenticationPlatform platform){
-        boolean loginIsInProgress = false;
-        switch (platform){
-            case FACEBOOK:
-                FacebookLoginFragment facebookLoginFragment = FacebookLoginFragment.newInstance();
-                showFragment(facebookLoginFragment, FacebookLoginFragment.TAG, false);
-                break;
-            case TWITTER:
-                TwitterLoginFragment twitterLoginFragment = TwitterLoginFragment.newInstance(loginIsInProgress);
-                showFragment(twitterLoginFragment, TwitterLoginFragment.TAG, false);
-                break;
-            case INSTAGRAM:
-                InstagramLoginFragment instagramLoginFragment = InstagramLoginFragment.newInstance(loginIsInProgress);
-                showFragment(instagramLoginFragment, InstagramLoginFragment.TAG, false);
-                break;
-        }
-    }
-
-//    @Override
-//    public void onTwitterLoginRequested(){
-//        TwitterLoginFragment twitterLoginFragment = TwitterLoginFragment.newInstance();
-//        showFragment(twitterLoginFragment, TwitterLoginFragment.TAG, false);
-//    }
-//
-//    @Override
-//    public void onInstagramLoginRequested(){
-//        InstagramLoginFragment instagramLoginFragment = InstagramLoginFragment.newInstance();
-//        showFragment(instagramLoginFragment, InstagramLoginFragment.TAG, false);
-//    }
-//
-//    @Override
-//    public void onFacebookLoginRequested(){
-//        FacebookLoginFragment facebookLoginFragment = FacebookLoginFragment.newInstance();
-//        showFragment(facebookLoginFragment, FacebookLoginFragment.TAG, false);
-//    }
-
     @Override
     public void onTestRequested(){
         TestFragment testFragment = new TestFragment();
         showFragment(testFragment, TestFragment.TAG, false);
     }
 
-    //AuthenticationListener
     @Override
-    public void onAuthenticationCompleted(KurtinUser.AuthenticationPlatform platform){
+    public void onAuthManagerRequested(){
+        AuthManagerFragment authManagerFragment = new AuthManagerFragment();
+        showFragment(authManagerFragment, AuthManagerFragment.TAG, false);
+    }
+
+    @Override
+    public void onKurtinLoginNavRequested(){
+        KurtinLoginFragment kurtinLoginFragment = new KurtinLoginFragment();
+        showFragment(kurtinLoginFragment, KurtinLoginFragment.TAG, true);
+    }
+
+    //KurtinNavListener
+    //*****************
+    @Override
+    public void onTestFragmentRequested(){
+        TestFragment testFragment = new TestFragment();
+        showFragment(testFragment, TestFragment.TAG, false);
+    }
+
+    @Override
+    public void onAuthManagerFragmentRequested(){
+        AuthManagerFragment authManagerFragment = new AuthManagerFragment();
+        showFragment(authManagerFragment, AuthManagerFragment.TAG, false);
+    }
+
+    @Override
+    public void onKurtinLoginFragmentRequested(){
+        KurtinLoginFragment kurtinLoginFragment = new KurtinLoginFragment();
+        showFragment(kurtinLoginFragment, KurtinLoginFragment.TAG, true);
+    }
+
+    //AuthenticationListener
+    //**********************
+    @Override
+    public void onKurtinLoginRequested(AuthPlatform.PlatformType platformType){
+        //Save primary login platform data
+        LoginPreferences.setPrimaryKurtinLoginPlatformType(this, platformType);
+
+        boolean loginIsInProgress = false;
+        switch (platformType){
+            case FACEBOOK:
+                FacebookLoginFragment facebookLoginFragment = FacebookLoginFragment.newInstance();
+                showFragment(facebookLoginFragment, FacebookLoginFragment.TAG, false);
+                break;
+            case TWITTER:
+                TwitterLoginFragment twitterLoginFragment = TwitterLoginFragment.newInstance(loginIsInProgress);
+                showFragment(twitterLoginFragment, TwitterLoginFragment.TAG, false);
+                break;
+            case INSTAGRAM:
+                InstagramLoginFragment instagramLoginFragment = InstagramLoginFragment.newInstance(loginIsInProgress);
+                showFragment(instagramLoginFragment, InstagramLoginFragment.TAG, false);
+                break;
+        }
+    }
+
+    @Override
+    public void onAuthenticationRequested(AuthPlatform.PlatformType platform){
+        boolean loginIsInProgress = false;
+        switch (platform){
+            case FACEBOOK:
+                FacebookLoginFragment facebookLoginFragment = FacebookLoginFragment.newInstance();
+                showFragment(facebookLoginFragment, FacebookLoginFragment.TAG, false);
+                break;
+            case TWITTER:
+                TwitterLoginFragment twitterLoginFragment = TwitterLoginFragment.newInstance(loginIsInProgress);
+                showFragment(twitterLoginFragment, TwitterLoginFragment.TAG, false);
+                break;
+            case INSTAGRAM:
+                InstagramLoginFragment instagramLoginFragment = InstagramLoginFragment.newInstance(loginIsInProgress);
+                showFragment(instagramLoginFragment, InstagramLoginFragment.TAG, false);
+                break;
+        }
+    }
+
+    @Override
+    public void onAuthenticationCompleted(AuthPlatform.PlatformType platformType){
+        KurtinUser.setAuthenticationStatus(this, platformType, true);
         LoginFragment loginFragment = LoginFragment.newInstance();
         showFragment(loginFragment, "loginFragment", false);
+    }
+
+    @Override
+    public void logOut(AuthPlatform.PlatformType platformType){
+        if(KurtinUser.currentUserIsLoggedIn(this)) {
+            KurtinUser.getCurrentUser(this).logOut(this, platformType);
+        }else{
+            Log.e(TAG, "ERROR: logOut(AuthPlatform.PlatformType platformType) requested but no user is logged in");
+        }
+    }
+
+    @Override
+    public void onKurtinLogOutRequested(){
+        if(KurtinUser.currentUserIsLoggedIn(this)) {
+            KurtinUser.getCurrentUser(this).logOutOfKurtin(this);
+            onKurtinLoginFragmentRequested();
+        }else{
+            Log.e(TAG, "ERROR: onKurtinLogOutRequested() requested but no user is logged in");
+        }
     }
 
     @Override

@@ -16,6 +16,8 @@ import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.kurtin.kurtin.R;
 import com.kurtin.kurtin.listeners.AuthenticationListener;
+import com.kurtin.kurtin.models.AuthPlatform;
+import com.kurtin.kurtin.models.FacebookUser;
 import com.kurtin.kurtin.models.KurtinUser;
 import com.kurtin.kurtin.persistence.LoginPreferences;
 
@@ -26,7 +28,7 @@ public class FacebookLoginFragment extends Fragment {
 
     public static final String TAG = "FacebookLoginFragment";
 
-    private static final KurtinUser.AuthenticationPlatform FACEBOOK = KurtinUser.AuthenticationPlatform.FACEBOOK;
+    private static final AuthPlatform.PlatformType FACEBOOK = AuthPlatform.PlatformType.FACEBOOK;
     private final List<String> FACEBOOK_PERMISSIONS =
             new ArrayList<String>(){{
                 add("email"); add("public_profile"); add("user_photos");}};
@@ -108,6 +110,8 @@ public class FacebookLoginFragment extends Fragment {
                             Log.v(TAG, "Result of fb primary login: " + result);
                         }
                     });
+                }else{
+                    FacebookUser.updateCurrentUserIdInSharedPreferences(getContext());
                 }
 
                 if (mListener != null){
@@ -130,8 +134,8 @@ public class FacebookLoginFragment extends Fragment {
         });
         mThisLoginFragment = this;
         mFacebookIsPrimaryLogin =
-                LoginPreferences.getPrimaryKurtinLoginPlatform(getContext())
-                        .equals(KurtinUser.AuthenticationPlatform.FACEBOOK);
+                LoginPreferences.getPrimaryKurtinLoginPlatformType(getContext())
+                        .equals(AuthPlatform.PlatformType.FACEBOOK);
     }
 
     private void logIn(){

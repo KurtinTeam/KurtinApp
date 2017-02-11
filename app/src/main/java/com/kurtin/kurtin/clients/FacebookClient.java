@@ -9,7 +9,12 @@ import com.facebook.FacebookRequestError;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
+import com.facebook.login.LoginManager;
 import com.kurtin.kurtin.helpers.JsonHelper;
+import com.kurtin.kurtin.models.AuthPlatform;
+import com.kurtin.kurtin.models.FacebookUser;
+import com.kurtin.kurtin.models.KurtinUser;
+import com.kurtin.kurtin.persistence.CurrentUserPreferences;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -25,6 +30,9 @@ import static com.kurtin.kurtin.helpers.JsonHelper.TAG;
 
 public class FacebookClient {
 
+    public static final String TAG = "FacebookClient";
+
+    private static AuthPlatform.PlatformType FACEBOOK_PLATFORM = AuthPlatform.PlatformType.FACEBOOK;
     private static FacebookClient mSharedClient = null;
 
     private FacebookClient(){
@@ -36,6 +44,11 @@ public class FacebookClient {
             mSharedClient = new FacebookClient();
         }
         return mSharedClient;
+    }
+
+    public void logOut(Context context) {
+        LoginManager.getInstance().logOut();
+        KurtinUser.setAuthenticationStatus(context, FACEBOOK_PLATFORM, false);
     }
 
     public void getCurrentUser(final JsonCallback callback){
@@ -60,18 +73,50 @@ public class FacebookClient {
     }
 
     public void checkAuthenticationStatus(final BooleanCallback callback){
-        getCurrentUser(new JsonCallback() {
-            @Override
-            public void onSuccess(JSONObject fbJsonObject) {
-                callback.result(true);
-            }
+        if(this.hasAccessToken()) {
+            getCurrentUser(new JsonCallback() {
+                @Override
+                public void onSuccess(JSONObject fbJsonObject) {
+                    callback.result(true);
+                }
 
-            @Override
-            public void onFailure(FacebookRequestError error) {
-                callback.result(false);
-            }
-        });
+                @Override
+                public void onFailure(FacebookRequestError error) {
+                    callback.result(false);
+                }
+            });
+        }else{
+            callback.result(false);
+        }
     }
+
+    public boolean hasAccessToken(){
+        return AccessToken.getCurrentAccessToken() != null;
+    }
+
+    //Implemented the below function in FacebookUser
+    //TODO: delete function once FacebookUser funciton is tested
+//    public void updateIdInSharedPreferences(final Context context){
+//        if(CurrentUserPreferences.userIsLoggedIn(context)){
+//            getCurrentUser(new JsonCallback() {
+//                @Override
+//                public void onSuccess(JSONObject fbJsonObject) {
+//                    JsonHelper jsonHelper = new JsonHelper(fbJsonObject);
+//                    String facebookId = jsonHelper.getString(FacebookUser.FbKeys.ID, null);
+//                    if(facebookId != null) {
+//                        CurrentUserPreferences.setFacebookId(context, facebookId);
+//                    }else{
+//                        Log.e(TAG, "Failure retrieving the facebookId in updateIdInSharedPreferences(final Context context)");
+//                    }
+//                }
+//
+//                @Override
+//                public void onFailure(FacebookRequestError error) {
+//                    Log.e(TAG, "Failure getting current user in updateIdInSharedPreferences(final Context context)");
+//                }
+//            });
+//        }
+//    }
 
     public void getMe(final JsonCallback callback) {
         GraphRequest graphRequest = GraphRequest.newMeRequest(AccessToken.getCurrentAccessToken(), new GraphRequest.GraphJSONObjectCallback() {

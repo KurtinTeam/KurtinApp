@@ -6,6 +6,7 @@ import android.util.Log;
 import com.kurtin.kurtin.clients.InstagramClient;
 import com.kurtin.kurtin.clients.TwitterClient;
 import com.kurtin.kurtin.helpers.JsonHelper;
+import com.kurtin.kurtin.persistence.CurrentUserPreferences;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.json.JSONObject;
@@ -45,7 +46,7 @@ public class InstagramUser {
     }
 
     public static void getCurrentUser(Context context, final InstagramUser.InstagramUserCallback callback){
-        InstagramClient.getSharedInstance(context).getCurrentUser(context, new JsonHttpResponseHandler(){
+        InstagramClient.getSharedInstance(context).getCurrentUser(new JsonHttpResponseHandler(){
             @Override
             public void onSuccess(
                     int statusCode, cz.msebera.android.httpclient.Header[] headers,
@@ -61,6 +62,23 @@ public class InstagramUser {
                     java.lang.Throwable throwable, org.json.JSONObject errorResponse){
                 Log.v(TAG, "Failure errorResponse: " + errorResponse.toString());
                 callback.onFailure(errorResponse.toString());
+            }
+        });
+    }
+
+    public static void updateCurrentUserIdInSharedPreferences(final Context context) {
+        getCurrentUser(context, new InstagramUserCallback() {
+            @Override
+            public void onSuccess(InstagramUser instagramUser) {
+                String instagramId = instagramUser.getInstagramId();
+                if(instagramId != null){
+                    CurrentUserPreferences.setInstagramId(context, instagramId);
+                }
+            }
+
+            @Override
+            public void onFailure(String errorString) {
+                Log.e(TAG, errorString);
             }
         });
     }

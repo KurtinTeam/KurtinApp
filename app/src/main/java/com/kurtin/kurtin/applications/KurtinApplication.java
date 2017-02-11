@@ -4,7 +4,10 @@ import android.app.Application;
 import android.content.res.Configuration;
 
 import com.facebook.FacebookSdk;
+import com.facebook.drawee.backends.pipeline.Fresco;
 import com.kurtin.kurtin.R;
+import com.kurtin.kurtin.clients.InstagramClient;
+import com.kurtin.kurtin.clients.TwitterClient;
 import com.parse.Parse;
 import com.parse.ParseACL;
 
@@ -43,6 +46,15 @@ public class KurtinApplication extends Application {
         //Facebook
         // Initialize Facebook Integration
         FacebookSdk.sdkInitialize(getApplicationContext());
+
+        //Fresco
+        Fresco.initialize(this);
+
+        //Twitter Client
+        TwitterClient.initialize(this);
+
+        //Instagram Client
+        InstagramClient.initialize(this);
 
     }
 

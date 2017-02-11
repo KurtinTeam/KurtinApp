@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/rlOverview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/ivIcon"
+            android:layout_width="@dimen/icon_dim"
+            android:layout_height="@dimen/icon_dim"
+            android:layout_marginLeft="@dimen/menu_margin_horz"
+            android:layout_marginRight="@dimen/menu_margin_horz"
+            android:layout_marginTop="@dimen/menu_margin_vert"
+            android:layout_marginBottom="@dimen/menu_margin_vert"
+            android:src="@drawable/ic_fb_color" />
+
+        <TextView
+            android:id="@+id/tvPlatform"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/auth_mgr_tv_height"
+            android:layout_marginBottom="@dimen/menu_margin_vert"
+            android:layout_marginTop="@dimen/menu_margin_vert"
+            android:layout_toRightOf="@+id/ivIcon"
+            android:gravity="center"
+            android:text="FACEBOOK"
+            android:textColor="@color/black"
+            android:textSize="@dimen/menu_main_text" />
+
+        <TextView
+            android:id="@+id/tvConnection"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/auth_mgr_tv_height"
+            android:layout_marginBottom="@dimen/menu_margin_vert"
+            android:layout_marginTop="@dimen/menu_margin_vert"
+            android:layout_toLeftOf="@+id/ivExpand"
+            android:gravity="center"
+            android:text="Authenticated"
+            android:textSize="@dimen/subtext_text" />
+
+        <ImageView
+            android:id="@+id/ivExpand"
+            android:layout_width="@dimen/icon_dim"
+            android:layout_height="@dimen/icon_dim"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginLeft="@dimen/menu_margin_horz"
+            android:layout_marginRight="@dimen/menu_margin_horz"
+            android:layout_marginTop="@dimen/menu_margin_vert"
+            android:layout_marginBottom="@dimen/menu_margin_vert"
+            android:src="@drawable/ic_expand_more_black_24dp" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rlDetail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/rlOverview">
+        <!--android:visibility="gone"-->
+
+        <TextView
+            android:id="@+id/tvMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="@string/status_authenticated"
+            android:textColor="@color/kurtin_text_primary"
+            android:textSize="@dimen/subtitle_text" />
+
+        <TextView
+            android:id="@+id/tvMessageSubject"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tvMessage"
+            android:layout_centerHorizontal="true"
+            android:text="Facebook"
+            android:textColor="@color/kurtin_text_primary"
+            android:textSize="@dimen/title_text"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/btnAuthAction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tvMessageSubject"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/rounded_button"
+            android:text="@string/disconnect"
+            android:textColor="@color/white"
+            android:textSize="@dimen/button_small_text" />
+
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_margin="8dp"
+        android:background="@color/divider_light" />
+
+
+</LinearLayout>

@@ -1,5 +1,6 @@
 package com.kurtin.kurtin.listeners;
 
+import com.kurtin.kurtin.models.AuthPlatform;
 import com.kurtin.kurtin.models.KurtinUser;
 
 /**
@@ -8,8 +9,16 @@ import com.kurtin.kurtin.models.KurtinUser;
 
 public interface AuthenticationListener {
 
-    public void onAuthenticationCompleted(KurtinUser.AuthenticationPlatform platform);
+    void onAuthenticationCompleted(AuthPlatform.PlatformType platformType);
 
-    public Boolean loginInProgress();
+    void onKurtinLoginRequested(AuthPlatform.PlatformType platformType);
+
+    void onAuthenticationRequested(AuthPlatform.PlatformType platform);
+
+    void onKurtinLogOutRequested();
+
+    void logOut(AuthPlatform.PlatformType platformType);
+
+    Boolean loginInProgress();
 
 }

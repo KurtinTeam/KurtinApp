@@ -4,11 +4,19 @@ import android.content.Context;
 import android.util.Log;
 
 import com.codepath.oauth.OAuthBaseClient;
+import com.facebook.FacebookRequestError;
+import com.kurtin.kurtin.R;
+import com.kurtin.kurtin.helpers.JsonHelper;
+import com.kurtin.kurtin.models.AuthPlatform;
+import com.kurtin.kurtin.models.FacebookUser;
+import com.kurtin.kurtin.models.KurtinUser;
 import com.kurtin.kurtin.networking.InstagramApi;
+import com.kurtin.kurtin.persistence.CurrentUserPreferences;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
+import org.json.JSONObject;
 import org.scribe.builder.api.Api;
 import org.scribe.builder.api.TwitterApi;
 import org.scribe.model.Token;
@@ -28,15 +36,26 @@ public class InstagramClient extends OAuthBaseClient {
     public static final String SCHEME = "http";
     public static final String HOST = "kurtin.college.app.instagram.oauth.com";
 
+    private static final AuthPlatform.PlatformType INSTAGRAM_PLATFORM = AuthPlatform.PlatformType.INSTAGRAM;
+
     //Class dependant constants
     public static final Class<? extends Api> REST_API_CLASS = InstagramApi.class; // Change this
     public static final String REST_URL = "https://api.instagram.com/v1"; // Change this, base API URL
-    public static final String REST_CONSUMER_KEY = "32b79b5450c041f692335f0f7ef07e14";       // Change this
-    public static final String REST_CONSUMER_SECRET = "a383802ab54f4536967b52f471b2fff9"; // Change this
+    public static final String REST_CONSUMER_KEY = "";       // Change this
+    public static final String REST_CONSUMER_SECRET = ""; // Change this
     public static final String REST_CALLBACK_URL = "http://kurtin.college.app.instagram.oauth.com"; // Change this (here and in manifest)
 
+    private static String consumerKey;
+    private static String consumerSecret;
+
+    public static void initialize(Context context){
+        consumerKey = context.getString(R.string.twitter_consumer_key);
+        consumerSecret = context.getString(R.string.twitter_consumer_secret);
+    }
+
     public InstagramClient(Context context) {
-        super(context, REST_API_CLASS, REST_URL, REST_CONSUMER_KEY, REST_CONSUMER_SECRET, REST_CALLBACK_URL);
+        super(context, REST_API_CLASS, REST_URL, consumerKey, consumerSecret, REST_CALLBACK_URL);
+//        super(context, REST_API_CLASS, REST_URL, REST_CONSUMER_KEY, REST_CONSUMER_SECRET, REST_CALLBACK_URL);
     }
 
     public void getHomeTimeline(AsyncHttpResponseHandler handler) {
@@ -67,26 +86,35 @@ public class InstagramClient extends OAuthBaseClient {
         return ((InstagramClient) InstagramClient.getInstance(InstagramClient.class, context));
     }
 
-    public void getCurrentUser(Context context, AsyncHttpResponseHandler handler){
-        InstagramClient.getSharedInstance(context).getMe(handler);
+    public void logOut(){
+        clearAccessToken();
+        KurtinUser.setAuthenticationStatus(context, INSTAGRAM_PLATFORM, false);
     }
 
-    public void checkAuthenticationStatus(Context context, final InstagramClient.BooleanCallback callback){
-        getSharedInstance(context).getCurrentUser(context, new JsonHttpResponseHandler(){
-            @Override
-            public void onSuccess(
-                    int statusCode, cz.msebera.android.httpclient.Header[] headers,
-                    org.json.JSONObject response){
-                callback.result(true);
-            }
+    public void getCurrentUser(AsyncHttpResponseHandler handler){
+        getMe(handler);
+    }
 
-            @Override
-            public void onFailure(
-                    int statusCode, cz.msebera.android.httpclient.Header[] headers,
-                    java.lang.Throwable throwable, org.json.JSONObject errorResponse){
-                callback.result(false);
-            }
-        });
+    public void checkAuthenticationStatus(final InstagramClient.BooleanCallback callback){
+        if(this.hasAccessToken()) {
+            getCurrentUser(new JsonHttpResponseHandler() {
+                @Override
+                public void onSuccess(
+                        int statusCode, cz.msebera.android.httpclient.Header[] headers,
+                        org.json.JSONObject response) {
+                    callback.result(true);
+                }
+
+                @Override
+                public void onFailure(
+                        int statusCode, cz.msebera.android.httpclient.Header[] headers,
+                        java.lang.Throwable throwable, org.json.JSONObject errorResponse) {
+                    callback.result(false);
+                }
+            });
+        }else{
+            callback.result(false);
+        }
     }
 
     public void getMe(AsyncHttpResponseHandler handler) {
@@ -128,8 +156,8 @@ public class InstagramClient extends OAuthBaseClient {
 
 
     //Returns null if there is no token
-    public static String getAccessToken(Context context){
-        Token token = InstagramClient.getInstance(InstagramClient.class, context).checkAccessToken();
+    public String getAccessToken(){
+        Token token = checkAccessToken();
         String string;
         if(token != null){
             string = token.getToken();
@@ -138,6 +166,10 @@ public class InstagramClient extends OAuthBaseClient {
         }
         Log.v(TAG, "Token: " + string);
         return string;
+    }
+
+    public boolean hasAccessToken(){
+        return checkAccessToken() != null;
     }
 
     public interface BooleanCallback{

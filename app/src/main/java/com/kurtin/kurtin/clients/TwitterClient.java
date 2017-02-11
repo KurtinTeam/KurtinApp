@@ -4,9 +4,10 @@ import android.content.Context;
 import android.util.Log;
 
 import com.codepath.oauth.OAuthBaseClient;
-import com.kurtin.kurtin.models.TwitterUser;
+import com.kurtin.kurtin.R;
+import com.kurtin.kurtin.models.AuthPlatform;
+import com.kurtin.kurtin.models.KurtinUser;
 import com.loopj.android.http.AsyncHttpResponseHandler;
-import com.loopj.android.http.BaseJsonHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
@@ -27,15 +28,26 @@ public class TwitterClient extends OAuthBaseClient {
     public static final String SCHEME = "oauth";  //Need to match REST_CALLBACK_URL below
     public static final String HOST = "kurtin.twitter.com"; //Need to match REST_CALLBACK_URL below
 
+    private static final AuthPlatform.PlatformType TWITTER_PLATFORM = AuthPlatform.PlatformType.TWITTER;
+
     //Class out of the box dependant constants
     public static final Class<? extends Api> REST_API_CLASS = TwitterApi.class; // Change this
     public static final String REST_URL = "https://api.twitter.com/1.1"; // Change this, base API URL
-    public static final String REST_CONSUMER_KEY = "SeSJfeLoJez2e5uWiKm3wildX";       // Change this
-    public static final String REST_CONSUMER_SECRET = "sc7wk6aCCMUjvyqg7WdqyxQ6bOf2uq4CoEgW79iAB2NFpFIRS3"; // Change this
+    public static final String REST_CONSUMER_KEY = "";       // Change this
+    public static final String REST_CONSUMER_SECRET = ""; // Change this
     public static final String REST_CALLBACK_URL = "oauth://kurtin.twitter.com"; // Change this (here and in manifest)
 
+    private static String consumerKey;
+    private static String consumerSecret;
+
+    public static void initialize(Context context){
+        consumerKey = context.getString(R.string.twitter_consumer_key);
+        consumerSecret = context.getString(R.string.twitter_consumer_secret);
+    }
+
     public TwitterClient(Context context) {
-        super(context, REST_API_CLASS, REST_URL, REST_CONSUMER_KEY, REST_CONSUMER_SECRET, REST_CALLBACK_URL);
+        super(context, REST_API_CLASS, REST_URL, consumerKey, consumerSecret, REST_CALLBACK_URL);
+//        super(context, REST_API_CLASS, REST_URL, REST_CONSUMER_KEY, REST_CONSUMER_SECRET, REST_CALLBACK_URL);
     }
 
     public void getHomeTimeline(AsyncHttpResponseHandler handler) {
@@ -66,27 +78,36 @@ public class TwitterClient extends OAuthBaseClient {
         return ((TwitterClient) TwitterClient.getInstance(TwitterClient.class, context));
     }
 
-    public void getCurrentUser(Context context, AsyncHttpResponseHandler handler){
-        getSharedInstance(context).getMe(handler);
+    public void logOut(){
+        clearAccessToken();
+        KurtinUser.setAuthenticationStatus(context, TWITTER_PLATFORM, false);
+    }
+
+    public void getCurrentUser(AsyncHttpResponseHandler handler){
+        getMe(handler);
 //        ((TwitterClient) TwitterClient.getInstance(TwitterClient.class, context)).getMe(handler);
     }
 
-    public void checkAuthenticationStatus(Context context, final TwitterClient.BooleanCallback callback){
-        getSharedInstance(context).getCurrentUser(context, new JsonHttpResponseHandler(){
-            @Override
-            public void onSuccess(
-                    int statusCode, cz.msebera.android.httpclient.Header[] headers,
-                    org.json.JSONObject response){
-                callback.result(true);
-            }
+    public void checkAuthenticationStatus(final TwitterClient.BooleanCallback callback){
+        if(hasAccessToken()) {
+            getCurrentUser(new JsonHttpResponseHandler() {
+                @Override
+                public void onSuccess(
+                        int statusCode, cz.msebera.android.httpclient.Header[] headers,
+                        org.json.JSONObject response) {
+                    callback.result(true);
+                }
 
-            @Override
-            public void onFailure(
-                    int statusCode, cz.msebera.android.httpclient.Header[] headers,
-                    java.lang.Throwable throwable, org.json.JSONObject errorResponse){
-                callback.result(false);
-            }
-        });
+                @Override
+                public void onFailure(
+                        int statusCode, cz.msebera.android.httpclient.Header[] headers,
+                        java.lang.Throwable throwable, org.json.JSONObject errorResponse) {
+                    callback.result(false);
+                }
+            });
+        }else{
+            callback.result(false);
+        }
     }
 
     public void getMe(AsyncHttpResponseHandler handler) {
@@ -145,8 +166,8 @@ public class TwitterClient extends OAuthBaseClient {
     }
 
     //Returns null if there is no token
-    public static String getAccessToken(Context context){
-        Token token = TwitterClient.getInstance(TwitterClient.class, context).checkAccessToken();
+    public String getAccessToken(){
+        Token token = checkAccessToken();
         String string;
         if(token != null){
             string = token.getToken();
@@ -155,6 +176,10 @@ public class TwitterClient extends OAuthBaseClient {
         }
         Log.v(TAG, "Token: " + string);
         return string;
+    }
+
+    public boolean hasAccessToken(){
+        return checkAccessToken() != null;
     }
 
     public interface BooleanCallback{

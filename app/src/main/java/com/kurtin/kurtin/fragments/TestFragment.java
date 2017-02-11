@@ -12,6 +12,8 @@ import android.widget.Button;
 import com.facebook.FacebookRequestError;
 import com.kurtin.kurtin.R;
 import com.kurtin.kurtin.clients.FacebookClient;
+import com.kurtin.kurtin.clients.TwitterClient;
+import com.loopj.android.http.JsonHttpResponseHandler;
 import com.parse.ParseObject;
 
 import org.json.JSONArray;
@@ -26,6 +28,7 @@ public class TestFragment extends Fragment {
 
     Button btnParseTest;
     Button btnFbApiTest;
+    Button btnTwApiTest;
 
     public TestFragment() {
         // Required empty public constructor
@@ -45,6 +48,7 @@ public class TestFragment extends Fragment {
     private void bindUi(View parentView){
         btnParseTest = (Button) parentView.findViewById(R.id.btnParseTest);
         btnFbApiTest = (Button) parentView.findViewById(R.id.btnFbApiTest);
+        btnTwApiTest = (Button) parentView.findViewById(R.id.btnTwApiTest);
     }
 
     private void setOnClickListeners(){
@@ -70,6 +74,35 @@ public class TestFragment extends Fragment {
                     @Override
                     public void onFailure(FacebookRequestError error) {
                         Log.v(TAG, "Error: " + error.toString());
+                    }
+                });
+            }
+        });
+
+        btnTwApiTest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String id = "42562446";
+                TwitterClient.getSharedInstance(getContext()).getTimelineWithUserId(id, new JsonHttpResponseHandler(){
+                    @Override
+                    public void onSuccess(
+                            int statusCode, cz.msebera.android.httpclient.Header[] headers,
+                            org.json.JSONObject response){
+                        Log.v(TAG, "Success. Object response: " + response.toString());
+                    }
+
+                    @Override
+                    public void onSuccess(
+                            int statusCode, cz.msebera.android.httpclient.Header[] headers,
+                            org.json.JSONArray response){
+                        Log.v(TAG, "Success. Array response: " + response.toString());
+                    }
+
+                    @Override
+                    public void onFailure(
+                            int statusCode, cz.msebera.android.httpclient.Header[] headers,
+                            java.lang.Throwable throwable, org.json.JSONObject errorResponse){
+                        Log.v(TAG, "Failure. errorResponse: " + errorResponse.toString());
                     }
                 });
             }

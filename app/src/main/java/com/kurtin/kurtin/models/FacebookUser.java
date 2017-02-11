@@ -1,9 +1,13 @@
 package com.kurtin.kurtin.models;
 
+import android.content.Context;
+import android.util.Log;
+
 import com.facebook.AccessToken;
 import com.facebook.FacebookRequestError;
 import com.kurtin.kurtin.clients.FacebookClient;
 import com.kurtin.kurtin.helpers.JsonHelper;
+import com.kurtin.kurtin.persistence.CurrentUserPreferences;
 
 import org.json.JSONObject;
 
@@ -45,6 +49,23 @@ public class FacebookUser {
             @Override
             public void onFailure(FacebookRequestError error) {
                 callback.onFailure(error);
+            }
+        });
+    }
+
+    public static void updateCurrentUserIdInSharedPreferences(final Context context) {
+        getCurrentUser(new FacebookUserCallback() {
+            @Override
+            public void onSuccess(FacebookUser facebookUser) {
+                String facebookId = facebookUser.getFacebookId();
+                if(facebookId != null){
+                    CurrentUserPreferences.setFacebookId(context, facebookId);
+                }
+            }
+
+            @Override
+            public void onFailure(FacebookRequestError error) {
+                Log.e(TAG, error.toString());
             }
         });
     }

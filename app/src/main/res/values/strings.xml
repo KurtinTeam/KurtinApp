@@ -6,4 +6,24 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
+    <!--Branding-->
+    <string name="slogan">Access Before Admission</string>
+    <string name="login_slogan">Take Control of Your Future</string>
+    
+    <!--Actions-->
+    <string name="fb_login">Log In with Facebook</string>
+    <string name="tw_login">Log In with Twitter</string>
+    <string name="ig_login">Log In with Instagram</string>
+    <string name="log_out">Log Out</string>
+    <string name="connect">Connect</string>
+    <string name="disconnect">Disconnect</string>
+    
+    <!--Status messages-->
+    <string name="authenticated">Authenticated</string>
+    <string name="not_authenticated">Not Authenticated</string>
+    <string name="status_authenticated">You are connected to:</string>
+    <string name="status_not_authenticated">You are not connected to:</string>
+    <string name="status_logged_in">You are logged in to Kurtin via:</string>
+
+
 </resources>

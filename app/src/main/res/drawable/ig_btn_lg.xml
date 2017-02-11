@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle" >
+            <corners android:radius="@dimen/radius_btn_lg" />
+            <gradient
+                android:startColor="@color/ig_blue"
+                android:endColor="@color/ig_yellow"
+                android:centerColor="@color/ig_red"
+                android:gradientRadius="500"
+                android:type="linear"
+                android:angle="315"
+                />
+            <!--<padding android:left="50dp" android:top="50dp"-->
+                <!--android:right="50dp" android:bottom="50dp" />-->
+        </shape>
+    </item>
+</selector>

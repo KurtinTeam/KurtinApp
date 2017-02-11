@@ -12,7 +12,9 @@ import com.codepath.oauth.OAuthLoginFragment;
 import com.kurtin.kurtin.R;
 import com.kurtin.kurtin.clients.TwitterClient;
 import com.kurtin.kurtin.listeners.AuthenticationListener;
+import com.kurtin.kurtin.models.AuthPlatform;
 import com.kurtin.kurtin.models.KurtinUser;
+import com.kurtin.kurtin.models.TwitterUser;
 import com.kurtin.kurtin.persistence.LoginPreferences;
 
 import org.scribe.model.Token;
@@ -22,7 +24,7 @@ import org.scribe.model.Token;
 public class TwitterLoginFragment extends OAuthLoginFragment<TwitterClient> {
 
     public static final String TAG = "TwitterLoginFragment";
-    public static final KurtinUser.AuthenticationPlatform TWITTER = KurtinUser.AuthenticationPlatform.TWITTER;
+    public static final AuthPlatform.PlatformType TWITTER = AuthPlatform.PlatformType.TWITTER;
 
     private static final String LOGIN_IN_PROGRESS = "loginInProgress";
 
@@ -99,6 +101,8 @@ public class TwitterLoginFragment extends OAuthLoginFragment<TwitterClient> {
                     Log.v(TAG, "Result of twitter primary login: " + result);
                 }
             });
+        }else{
+            TwitterUser.updateCurrentUserIdInSharedPreferences(getContext());
         }
 
         mListener.onAuthenticationCompleted(TWITTER);
@@ -112,8 +116,8 @@ public class TwitterLoginFragment extends OAuthLoginFragment<TwitterClient> {
 
     private void initialize(){
         mTwitterIsPrimaryLogin =
-                LoginPreferences.getPrimaryKurtinLoginPlatform(getContext())
-                        .equals(KurtinUser.AuthenticationPlatform.TWITTER);
+                LoginPreferences.getPrimaryKurtinLoginPlatformType(getContext())
+                        .equals(AuthPlatform.PlatformType.TWITTER);
     }
 
     private void authenticate(){
