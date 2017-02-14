@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--App styles-->
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">@color/kurtin_primary</color>
+    <color name="colorPrimaryDark">@color/kurtin_primary_dark</color>
+    <color name="colorAccent">@color/kurtin_accent</color>
 
     <!--Basic-->
     <color name="black">#000</color>
@@ -22,6 +22,7 @@
     <color name="onyx">#343D46</color>
     <color name="outer_space">#3D4854</color>
     <color name="japanese_indigo">#263c54</color>
+    <color name="blue_gray">#607D8B</color>
     <color name="divider_light">#D7D7D7</color>
     <color name="transparent">#0000</color>
     <color name="translucent">#77000000</color>
@@ -32,11 +33,13 @@
     <color name="kurtin_primary">#063f48</color>
     <color name="kurtin_primary_light">#15d1ee</color>
     <color name="kurtin_primary_dark">#05323a</color>
+    <color name="kurtin_accent">@color/dogwood_rose</color>
     <color name="kurtin_text_light">#11a7be</color>
     <color name="kurtin_text_primary">#0e8698</color>
     <color name="kurtin_primay_translucent">#cc063f48</color>
     <color name="kurtin_primary_dark_translucent">#aa05323a</color>
     <color name="kurtin_home_divider">@color/black</color>
+
 
     <!--Experimental-->
     <color name="lemon_glacier">#F2FF00</color>

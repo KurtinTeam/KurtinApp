@@ -12,12 +12,30 @@
     </item>
     <item
         is-multidex="true"
+        jar="/Users/cvar/.gradle/caches/modules-2/files-2.1/cz.msebera.android/httpclient/4.3.6/526a9f794eab830eae4f23a62c572878b3f491ab/httpclient-4.3.6.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.1"
+        sha1="526a9f794eab830eae4f23a62c572878b3f491ab">
+        <dex dex="/Users/cvar/NativeDev/Android/KurtinGit/Kurtin/app/build/intermediates/transforms/dex/debug/folders/1000/10/httpclient-4.3.6_dba7a150d3c34690492aff970130939b53181a27/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
         jar="/Users/cvar/.gradle/caches/modules-2/files-2.1/com.loopj.android/android-async-http/1.4.9/386a4339ffe52d5d63e80f9bed8d2b1d1a418249/android-async-http-1.4.9.jar"
         jumboMode="true"
         optimize="true"
         revision="25.0.1"
         sha1="386a4339ffe52d5d63e80f9bed8d2b1d1a418249">
         <dex dex="/Users/cvar/NativeDev/Android/KurtinGit/Kurtin/app/build/intermediates/transforms/dex/debug/folders/1000/10/android-async-http-1.4.9_067147f15c13df470104e46b1b72a40c6ecacffe/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/cvar/NativeDev/Android/KurtinGit/Kurtin/app/build/intermediates/exploded-aar/com.facebook.fresco/fresco/1.0.1/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.1"
+        sha1="cf836a435a496eb22ff2aa69aa1e619462549f81">
+        <dex dex="/Users/cvar/NativeDev/Android/KurtinGit/Kurtin/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.facebook.fresco-fresco-1.0.1_8f721b404dfc862cbffef51b49c538f9c560e0cc/classes.dex" />
     </item>
     <item
         is-multidex="true"
@@ -48,6 +66,60 @@
     </item>
     <item
         is-multidex="true"
+        jar="/Users/cvar/NativeDev/Android/KurtinGit/Kurtin/app/build/intermediates/exploded-aar/com.android.support/support-vector-drawable/25.1.1/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.1"
+        sha1="c03bf57f358aa10d253f21989e93bcf6014b3b17">
+        <dex dex="/Users/cvar/NativeDev/Android/KurtinGit/Kurtin/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.android.support-support-vector-drawable-25.1.1_022bb3aa3e14343bd223a332969dadb81c5d1a82/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/cvar/NativeDev/Android/KurtinGit/Kurtin/app/build/intermediates/incremental-classes/debug/instant-run-bootstrap.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.1"
+        sha1="e76848047f70584355178d7ab7d8028b84354d9b">
+        <dex dex="/Users/cvar/NativeDev/Android/KurtinGit/Kurtin/app/build/intermediates/transforms/dex/debug/folders/1000/10/instant-run-bootstrap_12750b2e100dd2676b74bf883d54a1305d01ef17/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/cvar/.gradle/caches/modules-2/files-2.1/com.parse.bolts/bolts-tasks/1.4.0/d85884acf6810a3bbbecb587f239005cbc846dc4/bolts-tasks-1.4.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.1"
+        sha1="d85884acf6810a3bbbecb587f239005cbc846dc4">
+        <dex dex="/Users/cvar/NativeDev/Android/KurtinGit/Kurtin/app/build/intermediates/transforms/dex/debug/folders/1000/10/bolts-tasks-1.4.0_fe1fb35dc0ec741c76cc187740291b10452470a1/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/cvar/NativeDev/Android/KurtinGit/Kurtin/app/build/intermediates/exploded-aar/com.android.support/design/25.1.1/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.1"
+        sha1="cd7951e04cfb9a8bf008d544a478d9a8d8192d38">
+        <dex dex="/Users/cvar/NativeDev/Android/KurtinGit/Kurtin/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.android.support-design-25.1.1_a133fce4d8a13834ca9d136b6fc6db29ac154f53/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/cvar/NativeDev/Android/KurtinGit/Kurtin/app/build/intermediates/exploded-aar/com.android.support/transition/25.1.1/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.1"
+        sha1="15b049fedbd8e3926bf99d9e45dfc9b2a1043bb9">
+        <dex dex="/Users/cvar/NativeDev/Android/KurtinGit/Kurtin/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.android.support-transition-25.1.1_5434d6d300fe15ee404b55918056d3fb370c79a6/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/cvar/Library/Android/sdk/extras/android/m2repository/com/android/support/support-annotations/25.1.1/support-annotations-25.1.1.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.1"
+        sha1="b59b6ee8d6ecc03e672d253800430343493a6ed8">
+        <dex dex="/Users/cvar/NativeDev/Android/KurtinGit/Kurtin/app/build/intermediates/transforms/dex/debug/folders/1000/10/support-annotations-25.1.1_fc88e0ad8d6d48d8d9a345df4059e846319d74f9/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
         jar="/Users/cvar/NativeDev/Android/KurtinGit/Kurtin/app/build/intermediates/exploded-aar/com.android.support/support-v4/25.1.1/jars/classes.jar"
         jumboMode="true"
         optimize="true"
@@ -61,7 +133,7 @@
         jumboMode="true"
         optimize="true"
         revision="25.0.1"
-        sha1="2496a997379aeb6b2312b55b34f8d40dd075b778">
+        sha1="ba6b74abf86b28e97591edfc82bf883ffa5e15e1">
         <dex dex="/Users/cvar/NativeDev/Android/KurtinGit/Kurtin/app/build/intermediates/transforms/dex/debug/folders/1000/10/instant-run_4bfe7990ff1b37c058b28120ee618fb72bb2f63f/classes.dex" />
     </item>
     <item
@@ -81,105 +153,6 @@
         revision="25.0.1"
         sha1="3e04ac8ca644ea7baddf6fdcf72e15c79e9df94a">
         <dex dex="/Users/cvar/NativeDev/Android/KurtinGit/Kurtin/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.android.support-support-core-ui-25.1.1_e43df9547abefdffe774862cd9ea65893b42af22/classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="/Users/cvar/.gradle/caches/modules-2/files-2.1/com.parse.bolts/bolts-applinks/1.4.0/8ad21bf21784dacce5f2043afb97218cc377e835/bolts-applinks-1.4.0.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.1"
-        sha1="8ad21bf21784dacce5f2043afb97218cc377e835">
-        <dex dex="/Users/cvar/NativeDev/Android/KurtinGit/Kurtin/app/build/intermediates/transforms/dex/debug/folders/1000/10/bolts-applinks-1.4.0_e2861f6c41d4ba2a2c9faf3e9c94961b5ec03346/classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="/Users/cvar/NativeDev/Android/KurtinGit/Kurtin/app/build/intermediates/exploded-aar/com.android.support/support-core-utils/25.1.1/jars/classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.1"
-        sha1="0fb891e8f0cfba0513043a7bb357513d229ca2cd">
-        <dex dex="/Users/cvar/NativeDev/Android/KurtinGit/Kurtin/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.android.support-support-core-utils-25.1.1_0fc632cdb172ebec448c5d5d94dc0aa71f1fc1b9/classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="/Users/cvar/NativeDev/Android/KurtinGit/Kurtin/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.1.1/jars/classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.1"
-        sha1="ecb496cc08dd52551fc5ec6db3bc0632e95a89bb">
-        <dex dex="/Users/cvar/NativeDev/Android/KurtinGit/Kurtin/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.android.support-appcompat-v7-25.1.1_ff92786a724fdee13f7de03f20835a201d17ccb5/classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="/Users/cvar/NativeDev/Android/KurtinGit/Kurtin/app/build/intermediates/exploded-aar/com.facebook.fresco/imagepipeline/1.0.1/jars/classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.1"
-        sha1="d9c4402c3057225d80cbbbec52154e7a25b0ebdf">
-        <dex dex="/Users/cvar/NativeDev/Android/KurtinGit/Kurtin/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.facebook.fresco-imagepipeline-1.0.1_6881cafe8a57b9f4dfa08df838e5480c8cc963f7/classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="/Users/cvar/NativeDev/Android/KurtinGit/Kurtin/app/build/intermediates/exploded-aar/com.codepath.libraries/android-oauth-handler/1.1.0/jars/classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.1"
-        sha1="bac2c6fd56dae63bf540102c8f12cfbf5802545f">
-        <dex dex="/Users/cvar/NativeDev/Android/KurtinGit/Kurtin/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.codepath.libraries-android-oauth-handler-1.1.0_b8d7a6ca98cbf1ce73e020ebf73171487a32022b/classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="/Users/cvar/.gradle/caches/modules-2/files-2.1/cz.msebera.android/httpclient/4.3.6/526a9f794eab830eae4f23a62c572878b3f491ab/httpclient-4.3.6.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.1"
-        sha1="526a9f794eab830eae4f23a62c572878b3f491ab">
-        <dex dex="/Users/cvar/NativeDev/Android/KurtinGit/Kurtin/app/build/intermediates/transforms/dex/debug/folders/1000/10/httpclient-4.3.6_dba7a150d3c34690492aff970130939b53181a27/classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="/Users/cvar/NativeDev/Android/KurtinGit/Kurtin/app/build/intermediates/exploded-aar/com.facebook.fresco/fresco/1.0.1/jars/classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.1"
-        sha1="cf836a435a496eb22ff2aa69aa1e619462549f81">
-        <dex dex="/Users/cvar/NativeDev/Android/KurtinGit/Kurtin/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.facebook.fresco-fresco-1.0.1_8f721b404dfc862cbffef51b49c538f9c560e0cc/classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="/Users/cvar/NativeDev/Android/KurtinGit/Kurtin/app/build/intermediates/exploded-aar/com.android.support/support-vector-drawable/25.1.1/jars/classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.1"
-        sha1="c03bf57f358aa10d253f21989e93bcf6014b3b17">
-        <dex dex="/Users/cvar/NativeDev/Android/KurtinGit/Kurtin/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.android.support-support-vector-drawable-25.1.1_022bb3aa3e14343bd223a332969dadb81c5d1a82/classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="/Users/cvar/NativeDev/Android/KurtinGit/Kurtin/app/build/intermediates/incremental-classes/debug/instant-run-bootstrap.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.1"
-        sha1="e87c8fe36a7540ac8f37ee4c5a654e7287e32e0b">
-        <dex dex="/Users/cvar/NativeDev/Android/KurtinGit/Kurtin/app/build/intermediates/transforms/dex/debug/folders/1000/10/instant-run-bootstrap_12750b2e100dd2676b74bf883d54a1305d01ef17/classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="/Users/cvar/.gradle/caches/modules-2/files-2.1/com.parse.bolts/bolts-tasks/1.4.0/d85884acf6810a3bbbecb587f239005cbc846dc4/bolts-tasks-1.4.0.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.1"
-        sha1="d85884acf6810a3bbbecb587f239005cbc846dc4">
-        <dex dex="/Users/cvar/NativeDev/Android/KurtinGit/Kurtin/app/build/intermediates/transforms/dex/debug/folders/1000/10/bolts-tasks-1.4.0_fe1fb35dc0ec741c76cc187740291b10452470a1/classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="/Users/cvar/Library/Android/sdk/extras/android/m2repository/com/android/support/support-annotations/25.1.1/support-annotations-25.1.1.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.1"
-        sha1="b59b6ee8d6ecc03e672d253800430343493a6ed8">
-        <dex dex="/Users/cvar/NativeDev/Android/KurtinGit/Kurtin/app/build/intermediates/transforms/dex/debug/folders/1000/10/support-annotations-25.1.1_fc88e0ad8d6d48d8d9a345df4059e846319d74f9/classes.dex" />
     </item>
     <item
         is-multidex="true"
@@ -210,6 +183,15 @@
     </item>
     <item
         is-multidex="true"
+        jar="/Users/cvar/.gradle/caches/modules-2/files-2.1/com.parse.bolts/bolts-applinks/1.4.0/8ad21bf21784dacce5f2043afb97218cc377e835/bolts-applinks-1.4.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.1"
+        sha1="8ad21bf21784dacce5f2043afb97218cc377e835">
+        <dex dex="/Users/cvar/NativeDev/Android/KurtinGit/Kurtin/app/build/intermediates/transforms/dex/debug/folders/1000/10/bolts-applinks-1.4.0_e2861f6c41d4ba2a2c9faf3e9c94961b5ec03346/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
         jar="/Users/cvar/NativeDev/Android/KurtinGit/Kurtin/app/build/intermediates/exploded-aar/com.codepath.libraries/android-oauth-handler/1.1.0/jars/libs/scribe-codepath-0.0.3.jar"
         jumboMode="true"
         optimize="true"
@@ -225,6 +207,15 @@
         revision="25.0.1"
         sha1="2668e49e4e31c7d451b76a36009b902bf44e0d70">
         <dex dex="/Users/cvar/NativeDev/Android/KurtinGit/Kurtin/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.facebook.fresco-fbcore-1.0.1_f43f9d4d2ae153eb599498bb8708a2e3a39a483f/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/cvar/NativeDev/Android/KurtinGit/Kurtin/app/build/intermediates/exploded-aar/com.android.support/support-core-utils/25.1.1/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.1"
+        sha1="0fb891e8f0cfba0513043a7bb357513d229ca2cd">
+        <dex dex="/Users/cvar/NativeDev/Android/KurtinGit/Kurtin/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.android.support-support-core-utils-25.1.1_0fc632cdb172ebec448c5d5d94dc0aa71f1fc1b9/classes.dex" />
     </item>
     <item
         is-multidex="true"
@@ -246,6 +237,24 @@
     </item>
     <item
         is-multidex="true"
+        jar="/Users/cvar/NativeDev/Android/KurtinGit/Kurtin/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.1.1/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.1"
+        sha1="ecb496cc08dd52551fc5ec6db3bc0632e95a89bb">
+        <dex dex="/Users/cvar/NativeDev/Android/KurtinGit/Kurtin/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.android.support-appcompat-v7-25.1.1_ff92786a724fdee13f7de03f20835a201d17ccb5/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/cvar/NativeDev/Android/KurtinGit/Kurtin/app/build/intermediates/exploded-aar/com.facebook.fresco/imagepipeline/1.0.1/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.1"
+        sha1="d9c4402c3057225d80cbbbec52154e7a25b0ebdf">
+        <dex dex="/Users/cvar/NativeDev/Android/KurtinGit/Kurtin/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.facebook.fresco-imagepipeline-1.0.1_6881cafe8a57b9f4dfa08df838e5480c8cc963f7/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
         jar="/Users/cvar/NativeDev/Android/KurtinGit/Kurtin/app/build/intermediates/exploded-aar/com.facebook.fresco/imagepipeline-base/1.0.1/jars/classes.jar"
         jumboMode="true"
         optimize="true"
@@ -261,6 +270,15 @@
         revision="25.0.1"
         sha1="5a61f17cd72e20aa4323cbf5f909b7c609619275">
         <dex dex="/Users/cvar/NativeDev/Android/KurtinGit/Kurtin/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.facebook.fresco-drawee-1.0.1_dd74f7597eb0c891f3d54f942b39cdff4516661d/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/cvar/NativeDev/Android/KurtinGit/Kurtin/app/build/intermediates/exploded-aar/com.codepath.libraries/android-oauth-handler/1.1.0/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.1"
+        sha1="bac2c6fd56dae63bf540102c8f12cfbf5802545f">
+        <dex dex="/Users/cvar/NativeDev/Android/KurtinGit/Kurtin/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.codepath.libraries-android-oauth-handler-1.1.0_b8d7a6ca98cbf1ce73e020ebf73171487a32022b/classes.dex" />
     </item>
 
 </items>

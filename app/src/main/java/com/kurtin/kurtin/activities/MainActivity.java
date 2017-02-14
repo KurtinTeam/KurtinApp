@@ -1,18 +1,26 @@
 package com.kurtin.kurtin.activities;
 
+import android.content.res.Configuration;
 import android.net.Uri;
+import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 
-import com.facebook.FacebookSdk;
-import com.facebook.appevents.AppEventsLogger;
+
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.kurtin.kurtin.R;
-import com.kurtin.kurtin.clients.FacebookClient;
 import com.kurtin.kurtin.clients.InstagramClient;
 import com.kurtin.kurtin.clients.TwitterClient;
 import com.kurtin.kurtin.fragments.AuthManagerFragment;
@@ -28,6 +36,9 @@ import com.kurtin.kurtin.models.AuthPlatform;
 import com.kurtin.kurtin.models.KurtinUser;
 import com.kurtin.kurtin.persistence.LoginPreferences;
 
+import static com.kurtin.kurtin.activities.MainActivity.ScreenType.FullScreen;
+import static com.kurtin.kurtin.activities.MainActivity.ScreenType.RegularScreen;
+
 
 public class MainActivity extends AppCompatActivity implements
         LoginFragment.LoginFragmentListener,
@@ -39,10 +50,24 @@ public class MainActivity extends AppCompatActivity implements
     private static final Boolean FULL_SCREEN = true;
     private static final Boolean REG_SCREEN = false;
 
-    private FrameLayout flFragmentFrame;
-    private FrameLayout flFragmentFrameFullScreen;
+    private FrameLayout flRegularScreen;
+    private FrameLayout flFullScreen;
+
+    //Nav Drawer and toolbar
+    private DrawerLayout dlDrawerLayout;
+    private Toolbar tbToolbar;
+    private NavigationView nvNavigationView;
+    private ActionBarDrawerToggle actionBarDrawerToggle;
 
     private Boolean mLoginInProgress;
+
+    public enum ScreenType{
+        FullScreen, RegularScreen;
+
+        public boolean isRegularScreen(){
+            return this.equals(RegularScreen);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,18 +77,52 @@ public class MainActivity extends AppCompatActivity implements
         //Initialize a shared list of Authentication Platforms
         KurtinUser.getUserPlatforms(this);
 
-        flFragmentFrame = (FrameLayout) findViewById(R.id.flFragmentFrame);
-        flFragmentFrameFullScreen = (FrameLayout) findViewById(R.id.flFragmentFrameFullScreen);
+        flRegularScreen = (FrameLayout) findViewById(R.id.flRegularScreen);
+        flFullScreen = (FrameLayout) findViewById(R.id.flFullScreen);
+
+        // Set a Toolbar to replace the ActionBar.
+        tbToolbar = (Toolbar) findViewById(R.id.tbToolbar);
+        setSupportActionBar(tbToolbar);
+
+        // Setup Drawer
+        dlDrawerLayout = (DrawerLayout) findViewById(R.id.dlDrawerLayout);
+        actionBarDrawerToggle = setupDrawerToggle();
+        nvNavigationView = (NavigationView) findViewById(R.id.nvNavigationView);
+        // Inflate the header view at runtime
+        View headerLayout = nvNavigationView.inflateHeaderView(R.layout.header_nav_view);
+        // We can now look up items within the header if needed
+//        SimpleDraweeView sdvHeaderPhoto = (SimpleDraweeView) headerLayout.findViewById(R.id.sdvProfileImage);
+        setupDrawerContent(nvNavigationView);
+
 
         mLoginInProgress = false;
-
-//        //Facebook
-//        FacebookSdk.sdkInitialize(getApplicationContext());
-//        AppEventsLogger.activateApp(this);
 
         showFirstFragment();
 
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (actionBarDrawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        // Sync the toggle state after onRestoreInstanceState has occurred.
+        actionBarDrawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        // Pass any configuration change to the drawer toggles
+        actionBarDrawerToggle.onConfigurationChanged(newConfig);
+    }
+
 
     private void showFirstFragment(){
         //Debugging
@@ -73,14 +132,14 @@ public class MainActivity extends AppCompatActivity implements
         if (uri == null){
             //No callback. show home screen.
             LoginFragment loginFragment = LoginFragment.newInstance();
-            showFragment(loginFragment, "loginFragment", false);
+            showFragment(loginFragment, "loginFragment", RegularScreen);
         }else{
             //Check if callback is from twitter
             if (uri.getScheme().equals(TwitterClient.SCHEME)){
                if(uri.getHost().equals(TwitterClient.HOST)){
                    Boolean loginIsInProgress = true;
                    TwitterLoginFragment twitterLoginFragment = TwitterLoginFragment.newInstance(loginIsInProgress);
-                   showFragment(twitterLoginFragment, TwitterLoginFragment.TAG, false);
+                   showFragment(twitterLoginFragment, TwitterLoginFragment.TAG, RegularScreen);
                }
             }
             //Check if callback is from Instagram
@@ -88,42 +147,70 @@ public class MainActivity extends AppCompatActivity implements
                 if (uri.getHost().equals(InstagramClient.HOST)) {
                     Boolean loginIsInProgress = true;
                     InstagramLoginFragment instagramLoginFragment = InstagramLoginFragment.newInstance(loginIsInProgress);
-                    showFragment(instagramLoginFragment, InstagramLoginFragment.TAG, false);
+                    showFragment(instagramLoginFragment, InstagramLoginFragment.TAG, RegularScreen);
                 }
             }
-//            Log.v(TAG, "intent data: " + uri.toString());
-//            Log.v(TAG, "intent data scheme: " + uri.getScheme());
-//            Log.v(TAG, "intent data host: " + uri.getHost());
-//            Log.v(TAG, "intent data authority: " + uri.getAuthority());
-//            Log.v(TAG, "intent data path: " + uri.getPath());
         }
-
-//        LoginFragment loginFragment = LoginFragment.newInstance();
-//        showFragment(loginFragment, "loginFragment", false);
     }
 
-    private void showFragment(Fragment fragment, String fragmentTag, Boolean showFullScreen){
+    private void showFragment(Fragment fragment, String fragmentTag, ScreenType screenType){
 
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         int viewId;
 
-        if(showFullScreen){
-            viewId = R.id.flFragmentFrameFullScreen;
-            flFragmentFrameFullScreen.setVisibility(View.VISIBLE);
-            flFragmentFrame.setVisibility(View.GONE);
+        if(screenType.isRegularScreen()){
+            viewId = R.id.flRegularScreen;
+            flRegularScreen.setVisibility(View.VISIBLE);
+            flFullScreen.setVisibility(View.GONE);
         }else{
-            viewId = R.id.flFragmentFrame;
-            flFragmentFrame.setVisibility(View.VISIBLE);
-            flFragmentFrameFullScreen.setVisibility(View.GONE);
+            viewId = R.id.flFullScreen;
+            flFullScreen.setVisibility(View.VISIBLE);
+            flRegularScreen.setVisibility(View.GONE);
         }
 
-//        Log.v(TAG, "before ft.replace()");
         ft.replace(viewId, fragment, fragmentTag);
 //        ft.addToBackStack(fragmentTag);
-//        Log.v(TAG, "before ft.commit()");
         ft.commit();
-//        Log.v(TAG, "after ft.commit()");
     }
+
+    private void setupDrawerContent(NavigationView navigationView) {
+        navigationView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(MenuItem menuItem) {
+                        selectDrawerItem(menuItem);
+                        return true;
+                    }
+                });
+    }
+
+    private void selectDrawerItem(MenuItem menuItem) {
+        //Handle menu selections here
+        switch(menuItem.getItemId()) {
+            case R.id.nav_first_fragment:
+                break;
+            case R.id.nav_second_fragment:
+                break;
+            case R.id.nav_third_fragment:
+                break;
+            default:
+        }
+
+//        // Highlight the selected item has been done by NavigationView
+//        menuItem.setChecked(true);
+//        // Set action bar title
+//        setTitle(menuItem.getTitle());
+
+        // Close the navigation drawer
+        dlDrawerLayout.closeDrawers();
+    }
+
+    private ActionBarDrawerToggle setupDrawerToggle() {
+        // NOTE: Make sure you pass in a valid toolbar reference.  ActionBarDrawToggle() does not require it
+        // and will not render the hamburger icon without it.
+        return new ActionBarDrawerToggle(this, dlDrawerLayout, tbToolbar, R.string.drawer_open,  R.string.drawer_close);
+    }
+
 
     //*
     //**
@@ -138,19 +225,19 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onTestRequested(){
         TestFragment testFragment = new TestFragment();
-        showFragment(testFragment, TestFragment.TAG, false);
+        showFragment(testFragment, TestFragment.TAG, RegularScreen);
     }
 
     @Override
     public void onAuthManagerRequested(){
         AuthManagerFragment authManagerFragment = new AuthManagerFragment();
-        showFragment(authManagerFragment, AuthManagerFragment.TAG, false);
+        showFragment(authManagerFragment, AuthManagerFragment.TAG, RegularScreen);
     }
 
     @Override
     public void onKurtinLoginNavRequested(){
         KurtinLoginFragment kurtinLoginFragment = new KurtinLoginFragment();
-        showFragment(kurtinLoginFragment, KurtinLoginFragment.TAG, true);
+        showFragment(kurtinLoginFragment, KurtinLoginFragment.TAG, FullScreen);
     }
 
     //KurtinNavListener
@@ -158,19 +245,19 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onTestFragmentRequested(){
         TestFragment testFragment = new TestFragment();
-        showFragment(testFragment, TestFragment.TAG, false);
+        showFragment(testFragment, TestFragment.TAG, RegularScreen);
     }
 
     @Override
     public void onAuthManagerFragmentRequested(){
         AuthManagerFragment authManagerFragment = new AuthManagerFragment();
-        showFragment(authManagerFragment, AuthManagerFragment.TAG, false);
+        showFragment(authManagerFragment, AuthManagerFragment.TAG, RegularScreen);
     }
 
     @Override
     public void onKurtinLoginFragmentRequested(){
         KurtinLoginFragment kurtinLoginFragment = new KurtinLoginFragment();
-        showFragment(kurtinLoginFragment, KurtinLoginFragment.TAG, true);
+        showFragment(kurtinLoginFragment, KurtinLoginFragment.TAG, FullScreen);
     }
 
     //AuthenticationListener
@@ -184,15 +271,15 @@ public class MainActivity extends AppCompatActivity implements
         switch (platformType){
             case FACEBOOK:
                 FacebookLoginFragment facebookLoginFragment = FacebookLoginFragment.newInstance();
-                showFragment(facebookLoginFragment, FacebookLoginFragment.TAG, false);
+                showFragment(facebookLoginFragment, FacebookLoginFragment.TAG, RegularScreen);
                 break;
             case TWITTER:
                 TwitterLoginFragment twitterLoginFragment = TwitterLoginFragment.newInstance(loginIsInProgress);
-                showFragment(twitterLoginFragment, TwitterLoginFragment.TAG, false);
+                showFragment(twitterLoginFragment, TwitterLoginFragment.TAG, RegularScreen);
                 break;
             case INSTAGRAM:
                 InstagramLoginFragment instagramLoginFragment = InstagramLoginFragment.newInstance(loginIsInProgress);
-                showFragment(instagramLoginFragment, InstagramLoginFragment.TAG, false);
+                showFragment(instagramLoginFragment, InstagramLoginFragment.TAG, RegularScreen);
                 break;
         }
     }
@@ -203,15 +290,15 @@ public class MainActivity extends AppCompatActivity implements
         switch (platform){
             case FACEBOOK:
                 FacebookLoginFragment facebookLoginFragment = FacebookLoginFragment.newInstance();
-                showFragment(facebookLoginFragment, FacebookLoginFragment.TAG, false);
+                showFragment(facebookLoginFragment, FacebookLoginFragment.TAG, RegularScreen);
                 break;
             case TWITTER:
                 TwitterLoginFragment twitterLoginFragment = TwitterLoginFragment.newInstance(loginIsInProgress);
-                showFragment(twitterLoginFragment, TwitterLoginFragment.TAG, false);
+                showFragment(twitterLoginFragment, TwitterLoginFragment.TAG, RegularScreen);
                 break;
             case INSTAGRAM:
                 InstagramLoginFragment instagramLoginFragment = InstagramLoginFragment.newInstance(loginIsInProgress);
-                showFragment(instagramLoginFragment, InstagramLoginFragment.TAG, false);
+                showFragment(instagramLoginFragment, InstagramLoginFragment.TAG, RegularScreen);
                 break;
         }
     }
@@ -220,7 +307,7 @@ public class MainActivity extends AppCompatActivity implements
     public void onAuthenticationCompleted(AuthPlatform.PlatformType platformType){
         KurtinUser.setAuthenticationStatus(this, platformType, true);
         LoginFragment loginFragment = LoginFragment.newInstance();
-        showFragment(loginFragment, "loginFragment", false);
+        showFragment(loginFragment, "loginFragment", RegularScreen);
     }
 
     @Override

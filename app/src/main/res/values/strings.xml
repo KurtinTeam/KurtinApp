@@ -25,5 +25,9 @@
     <string name="status_not_authenticated">You are not connected to:</string>
     <string name="status_logged_in">You are logged in to Kurtin via:</string>
 
+    <!--Toolbar and Navigation View-->
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+
 
 </resources>
