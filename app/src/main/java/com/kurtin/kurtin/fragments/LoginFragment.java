@@ -72,6 +72,7 @@ public class LoginFragment extends Fragment {
     private Button btnGoToAuthManager;
     private Button btnGoToLoginFragment;
     private LoginButton btnFacebook;
+    private Button btnCategories;
 
     private CallbackManager mCallbackManager;
     private LoginFragment mThisLoginFragment;
@@ -148,6 +149,7 @@ public class LoginFragment extends Fragment {
         btnGoToTest = (Button) mParentView.findViewById(R.id.btnGoToTest);
         btnGoToAuthManager = (Button) mParentView.findViewById(R.id.btnGoToAuthManager);
         btnGoToLoginFragment = (Button) mParentView.findViewById(R.id.btnGoToLoginFragment);
+        btnCategories = (Button) mParentView.findViewById(R.id.btnCategories);
 
         setupDefaultFbButton();
     }
@@ -395,6 +397,18 @@ public class LoginFragment extends Fragment {
                 }
             }
         });
+
+        btnCategories.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try{
+                    mListener.onCategoriesNavRequested();
+                }catch (Exception e){
+                    Log.e(TAG, "Must implement LoginFragmentListener");
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     private void setupDefaultFbButton(){
@@ -450,5 +464,6 @@ public class LoginFragment extends Fragment {
         void onTestRequested();
         void onAuthManagerRequested();
         void onKurtinLoginNavRequested();
+        void onCategoriesNavRequested();
     }
 }

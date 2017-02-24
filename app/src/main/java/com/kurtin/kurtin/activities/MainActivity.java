@@ -24,17 +24,21 @@ import com.kurtin.kurtin.R;
 import com.kurtin.kurtin.clients.InstagramClient;
 import com.kurtin.kurtin.clients.TwitterClient;
 import com.kurtin.kurtin.fragments.AuthManagerFragment;
+import com.kurtin.kurtin.fragments.CategoriesFragment;
 import com.kurtin.kurtin.fragments.FacebookLoginFragment;
 import com.kurtin.kurtin.fragments.InstagramLoginFragment;
 import com.kurtin.kurtin.fragments.KurtinLoginFragment;
 import com.kurtin.kurtin.fragments.LoginFragment;
+import com.kurtin.kurtin.fragments.SchoolListFragment;
 import com.kurtin.kurtin.fragments.TestFragment;
 import com.kurtin.kurtin.fragments.TwitterLoginFragment;
 import com.kurtin.kurtin.listeners.AuthenticationListener;
 import com.kurtin.kurtin.listeners.KurtinNavListener;
 import com.kurtin.kurtin.models.AuthPlatform;
 import com.kurtin.kurtin.models.KurtinUser;
+import com.kurtin.kurtin.models.School;
 import com.kurtin.kurtin.persistence.LoginPreferences;
+import com.parse.ParseRelation;
 
 import static com.kurtin.kurtin.activities.MainActivity.ScreenType.FullScreen;
 import static com.kurtin.kurtin.activities.MainActivity.ScreenType.RegularScreen;
@@ -240,6 +244,12 @@ public class MainActivity extends AppCompatActivity implements
         showFragment(kurtinLoginFragment, KurtinLoginFragment.TAG, FullScreen);
     }
 
+    @Override
+    public void onCategoriesNavRequested(){
+        CategoriesFragment categoriesFragment = new CategoriesFragment();
+        showFragment(categoriesFragment, CategoriesFragment.TAG, RegularScreen);
+    }
+
     //KurtinNavListener
     //*****************
     @Override
@@ -255,9 +265,21 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onKurtinLoginFragmentRequested(){
+    public void onKurtinLoginFragmentRequested() {
         KurtinLoginFragment kurtinLoginFragment = new KurtinLoginFragment();
         showFragment(kurtinLoginFragment, KurtinLoginFragment.TAG, FullScreen);
+    }
+
+    @Override
+    public void onCategoriesFragmentRequested(){
+        CategoriesFragment categoriesFragment = new CategoriesFragment();
+        showFragment(categoriesFragment, CategoriesFragment.TAG, RegularScreen);
+    }
+
+    @Override
+    public void onSchoolListFragmentRequested(String categoryTypeObjId){
+        SchoolListFragment schoolListFragment = SchoolListFragment.newInstance(categoryTypeObjId);
+        showFragment(schoolListFragment, SchoolListFragment.TAG, RegularScreen);
     }
 
     //AuthenticationListener

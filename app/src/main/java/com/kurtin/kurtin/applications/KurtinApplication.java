@@ -8,8 +8,13 @@ import com.facebook.drawee.backends.pipeline.Fresco;
 import com.kurtin.kurtin.R;
 import com.kurtin.kurtin.clients.InstagramClient;
 import com.kurtin.kurtin.clients.TwitterClient;
+import com.kurtin.kurtin.models.BaseAd;
+import com.kurtin.kurtin.models.Category;
+import com.kurtin.kurtin.models.CategoryJoin;
+import com.kurtin.kurtin.models.School;
 import com.parse.Parse;
 import com.parse.ParseACL;
+import com.parse.ParseObject;
 
 /**
  * Created by cvar on 1/23/17.
@@ -24,19 +29,25 @@ public class KurtinApplication extends Application {
         // Required initialization logic here!
 
         //Parse
-        // Enable Local Datastore.
-        Parse.enableLocalDatastore(this);
         //Make parse objects public
         ParseACL defaultACL = new ParseACL();
         // If you would like all objects to be private by default, remove this line.
         defaultACL.setPublicReadAccess(true);
         defaultACL.setPublicWriteAccess(true);
         ParseACL.setDefaultACL(defaultACL, true);
+        //Parse Objects
+        ParseObject.registerSubclass(CategoryJoin.class);
+        ParseObject.registerSubclass(BaseAd.class);
+        ParseObject.registerSubclass(Category.class);
+        ParseObject.registerSubclass(School.class);
+        // Enable Local Datastore.
+//        Parse.enableLocalDatastore(this);
         //Parse initialization
         Parse.initialize(new Parse.Configuration.Builder(this)
                 .applicationId(getString(R.string.parse_app_id))
                 .server(getString(R.string.parse_server_url))
                 .clientKey(getString(R.string.parse_client_key))
+                .enableLocalDataStore()
                 .build()
         );
         // Initialization code here

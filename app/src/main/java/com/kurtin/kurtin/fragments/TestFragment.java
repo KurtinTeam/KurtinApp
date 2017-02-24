@@ -1,6 +1,8 @@
 package com.kurtin.kurtin.fragments;
 
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -8,16 +10,24 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 
 import com.facebook.FacebookRequestError;
 import com.kurtin.kurtin.R;
 import com.kurtin.kurtin.clients.FacebookClient;
 import com.kurtin.kurtin.clients.TwitterClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
+import com.parse.FindCallback;
+import com.parse.GetDataCallback;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.ParseException;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -29,6 +39,9 @@ public class TestFragment extends Fragment {
     Button btnParseTest;
     Button btnFbApiTest;
     Button btnTwApiTest;
+    Button btnQuery;
+
+    ImageView ivTest;
 
     public TestFragment() {
         // Required empty public constructor
@@ -49,6 +62,9 @@ public class TestFragment extends Fragment {
         btnParseTest = (Button) parentView.findViewById(R.id.btnParseTest);
         btnFbApiTest = (Button) parentView.findViewById(R.id.btnFbApiTest);
         btnTwApiTest = (Button) parentView.findViewById(R.id.btnTwApiTest);
+        btnQuery = (Button) parentView.findViewById(R.id.btnQuery);
+
+        ivTest = (ImageView) parentView.findViewById(R.id.ivTest);
     }
 
     private void setOnClickListeners(){
@@ -103,6 +119,41 @@ public class TestFragment extends Fragment {
                             int statusCode, cz.msebera.android.httpclient.Header[] headers,
                             java.lang.Throwable throwable, org.json.JSONObject errorResponse){
                         Log.v(TAG, "Failure. errorResponse: " + errorResponse.toString());
+                    }
+                });
+            }
+        });
+
+        btnQuery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ParseQuery<ParseObject> query = ParseQuery.getQuery("School");
+                query.whereEqualTo("objectId", "4EXc9CyDDT");
+                query.findInBackground(new FindCallback<ParseObject>() {
+                    public void done(List<ParseObject> schoolList, ParseException e) {
+                        if (e == null) {
+                            Log.d("score", "Retrieved " + schoolList.size() + " scores");
+                            ParseObject school = schoolList.get(0);
+                            ParseFile campusImage = (ParseFile) school.get("studentImage");
+                            campusImage.getDataInBackground(new GetDataCallback() {
+                                @Override
+                                public void done(byte[] data, ParseException e) {
+                                    Log.v(TAG, "Data downloaded");
+                                    if(e != null) {
+                                        e.printStackTrace();
+                                    }
+                                    if (data != null) {
+                                        Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+                                        ivTest.setImageBitmap(bitmap);
+                                        Log.v(TAG, "Image set");
+                                    }else{
+                                        Log.v(TAG, "Data was null");
+                                    }
+                                }
+                            });
+                        } else {
+                            Log.d("score", "Error: " + e.getMessage());
+                        }
                     }
                 });
             }

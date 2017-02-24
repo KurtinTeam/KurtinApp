@@ -170,5 +170,12 @@
         android:layout_toRightOf="@id/btnGoToAuthManager"
         android:text="Login Frag"/>
 
+    <Button
+        android:id="@+id/btnCategories"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnGoToTest"
+        android:text="Categories"/>
+
 
 </RelativeLayout>

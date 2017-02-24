@@ -14,6 +14,7 @@
     <dimen name="content_text">16sp</dimen>
     <dimen name="subtext_text">12sp</dimen>
     <dimen name="button_small_text">12sp</dimen>
+    <dimen name="tile_header">20sp</dimen>
 
     <!--Margin-->
     <dimen name="icon_margin">8dp</dimen>

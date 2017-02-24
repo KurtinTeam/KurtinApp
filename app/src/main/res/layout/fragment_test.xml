@@ -14,14 +14,30 @@
         android:id="@+id/btnFbApiTest"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/btnParseTest"
+        android:layout_toRightOf="@+id/btnParseTest"
         android:text="FB Api"/>
 
     <Button
         android:id="@+id/btnTwApiTest"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/btnFbApiTest"
+        android:layout_toRightOf="@+id/btnFbApiTest"
         android:text="TW Api"/>
+
+    <Button
+        android:id="@+id/btnQuery"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/btnTwApiTest"
+        android:text="Query"/>
+
+    <ImageView
+        android:id="@+id/ivTest"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_below="@id/btnParseTest"
+        android:src="@color/blue_gray"
+        android:scaleType="centerCrop"
+        />
 
 </RelativeLayout>
