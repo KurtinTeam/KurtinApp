@@ -11,13 +11,14 @@ import com.parse.ParseQuery;
 @ParseClassName("BaseAd")
 public class BaseAd extends ParseObject {
 
-    public static String TAG = "BaseAd";
+    public static final String TAG = "BaseAd";
 
     // name, categoryItems, caption, title
-    private static String NAME_KEY = "name";
-    private static String SOURCE_KEY = "source";
-    private static String CAPTION_KEY = "caption";
-    private static String TITLE_KEY = "title";
+    private static final String NAME_KEY = "name";
+    private static final String SOURCE_KEY = "source";
+    private static final String CAPTION_KEY = "caption";
+    private static final String TITLE_KEY = "title";
+    private static final String MEDIA_URL_KEY = "mediaUrl";
 
     public static ParseQuery<BaseAd> getQuery(){
         return ParseQuery.getQuery(BaseAd.class);
@@ -37,6 +38,10 @@ public class BaseAd extends ParseObject {
 
     public String getTitle() {
         return getString(TITLE_KEY);
+    }
+
+    public String getMediaUrl(){
+        return getString(MEDIA_URL_KEY);
     }
 
     public void setCaption(String caption) {

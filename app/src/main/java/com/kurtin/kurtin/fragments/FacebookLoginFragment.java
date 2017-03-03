@@ -27,6 +27,7 @@ import java.util.List;
 public class FacebookLoginFragment extends Fragment {
 
     public static final String TAG = "FacebookLoginFragment";
+    public static final String TITLE = "Facebook Login";
 
     private static final AuthPlatform.PlatformType FACEBOOK = AuthPlatform.PlatformType.FACEBOOK;
     private final List<String> FACEBOOK_PERMISSIONS =

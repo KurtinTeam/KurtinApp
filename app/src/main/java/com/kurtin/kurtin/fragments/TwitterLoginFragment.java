@@ -24,6 +24,7 @@ import org.scribe.model.Token;
 public class TwitterLoginFragment extends OAuthLoginFragment<TwitterClient> {
 
     public static final String TAG = "TwitterLoginFragment";
+    public static final String TITLE = "Twitter Login";
     public static final AuthPlatform.PlatformType TWITTER = AuthPlatform.PlatformType.TWITTER;
 
     private static final String LOGIN_IN_PROGRESS = "loginInProgress";

@@ -51,9 +51,6 @@ public class MainActivity extends AppCompatActivity implements
 
     private static final String TAG = "MainActivity";
 
-    private static final Boolean FULL_SCREEN = true;
-    private static final Boolean REG_SCREEN = false;
-
     private FrameLayout flRegularScreen;
     private FrameLayout flFullScreen;
 
@@ -62,6 +59,8 @@ public class MainActivity extends AppCompatActivity implements
     private Toolbar tbToolbar;
     private NavigationView nvNavigationView;
     private ActionBarDrawerToggle actionBarDrawerToggle;
+
+    private String mToolbarTitle;
 
     private Boolean mLoginInProgress;
 
@@ -81,36 +80,34 @@ public class MainActivity extends AppCompatActivity implements
         //Initialize a shared list of Authentication Platforms
         KurtinUser.getUserPlatforms(this);
 
-        flRegularScreen = (FrameLayout) findViewById(R.id.flRegularScreen);
-        flFullScreen = (FrameLayout) findViewById(R.id.flFullScreen);
+        //set up the UI
+        bindUiElements();
 
-        // Set a Toolbar to replace the ActionBar.
-        tbToolbar = (Toolbar) findViewById(R.id.tbToolbar);
-        setSupportActionBar(tbToolbar);
+        //Setup a back stack listener
+        getSupportFragmentManager().addOnBackStackChangedListener(
+                new FragmentManager.OnBackStackChangedListener() {
+                    public void onBackStackChanged() {
+                        refreshUi();
+                    }
+                });
 
-        // Setup Drawer
-        dlDrawerLayout = (DrawerLayout) findViewById(R.id.dlDrawerLayout);
-        actionBarDrawerToggle = setupDrawerToggle();
-        nvNavigationView = (NavigationView) findViewById(R.id.nvNavigationView);
-        // Inflate the header view at runtime
-        View headerLayout = nvNavigationView.inflateHeaderView(R.layout.header_nav_view);
-        // We can now look up items within the header if needed
-//        SimpleDraweeView sdvHeaderPhoto = (SimpleDraweeView) headerLayout.findViewById(R.id.sdvProfileImage);
-        setupDrawerContent(nvNavigationView);
-
-
-        mLoginInProgress = false;
+        //TODO: Look to delete this code
+//        mLoginInProgress = false;
 
         showFirstFragment();
 
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (actionBarDrawerToggle.onOptionsItemSelected(item)) {
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
+        Log.v(TAG, "Inside mainActivity.onOptionsItemSelected(MenuItem) - MenuItem:" +
+                menuItem.toString() +
+                "  ID: " + menuItem.getItemId());
+        
+        if (actionBarDrawerToggle.onOptionsItemSelected(menuItem)) {
             return true;
         }
-        return super.onOptionsItemSelected(item);
+        return super.onOptionsItemSelected(menuItem);
     }
 
     @Override
@@ -128,6 +125,27 @@ public class MainActivity extends AppCompatActivity implements
     }
 
 
+    private void bindUiElements(){
+        flRegularScreen = (FrameLayout) findViewById(R.id.flRegularScreen);
+        flFullScreen = (FrameLayout) findViewById(R.id.flFullScreen);
+
+        // Set a Toolbar to replace the ActionBar.
+        tbToolbar = (Toolbar) findViewById(R.id.tbToolbar);
+        setSupportActionBar(tbToolbar);
+
+        // Setup Drawer
+        dlDrawerLayout = (DrawerLayout) findViewById(R.id.dlDrawerLayout);
+        actionBarDrawerToggle = setupDrawerToggle();
+        dlDrawerLayout.addDrawerListener(actionBarDrawerToggle);
+        nvNavigationView = (NavigationView) findViewById(R.id.nvNavigationView);
+        // Inflate the header view at runtime
+        View headerLayout = nvNavigationView.inflateHeaderView(R.layout.header_nav_view);
+        // We can now look up items within the header if needed
+//        SimpleDraweeView sdvHeaderPhoto = (SimpleDraweeView) headerLayout.findViewById(R.id.sdvProfileImage);
+        setupDrawerContent(nvNavigationView);
+    }
+
+
     private void showFirstFragment(){
         //Debugging
         // Fetch the uri that was passed in (which exists if this is being returned from authorization flow)
@@ -135,15 +153,16 @@ public class MainActivity extends AppCompatActivity implements
         //Check if we are getting a callback from an Oauth service
         if (uri == null){
             //No callback. show home screen.
-            LoginFragment loginFragment = LoginFragment.newInstance();
-            showFragment(loginFragment, "loginFragment", RegularScreen);
+            tbToolbar.setTitle(CategoriesFragment.TITLE);
+            CategoriesFragment categoriesFragment = new CategoriesFragment();
+            showFragment(categoriesFragment, CategoriesFragment.TAG, CategoriesFragment.TITLE, RegularScreen);
         }else{
             //Check if callback is from twitter
             if (uri.getScheme().equals(TwitterClient.SCHEME)){
                if(uri.getHost().equals(TwitterClient.HOST)){
                    Boolean loginIsInProgress = true;
                    TwitterLoginFragment twitterLoginFragment = TwitterLoginFragment.newInstance(loginIsInProgress);
-                   showFragment(twitterLoginFragment, TwitterLoginFragment.TAG, RegularScreen);
+                   showFragment(twitterLoginFragment, TwitterLoginFragment.TAG, TwitterLoginFragment.TITLE, RegularScreen);
                }
             }
             //Check if callback is from Instagram
@@ -151,17 +170,19 @@ public class MainActivity extends AppCompatActivity implements
                 if (uri.getHost().equals(InstagramClient.HOST)) {
                     Boolean loginIsInProgress = true;
                     InstagramLoginFragment instagramLoginFragment = InstagramLoginFragment.newInstance(loginIsInProgress);
-                    showFragment(instagramLoginFragment, InstagramLoginFragment.TAG, RegularScreen);
+                    showFragment(instagramLoginFragment, InstagramLoginFragment.TAG, InstagramLoginFragment.TITLE, RegularScreen);
                 }
             }
         }
     }
 
-    private void showFragment(Fragment fragment, String fragmentTag, ScreenType screenType){
+    private void showFragment(Fragment fragment, String fragmentTag, String fragmentTitle, ScreenType screenType){
+        mToolbarTitle = fragmentTitle;
 
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         int viewId;
 
+        // Determine which fragment container to use.
         if(screenType.isRegularScreen()){
             viewId = R.id.flRegularScreen;
             flRegularScreen.setVisibility(View.VISIBLE);
@@ -173,7 +194,7 @@ public class MainActivity extends AppCompatActivity implements
         }
 
         ft.replace(viewId, fragment, fragmentTag);
-//        ft.addToBackStack(fragmentTag);
+        ft.addToBackStack(fragmentTitle);
         ft.commit();
     }
 
@@ -182,6 +203,7 @@ public class MainActivity extends AppCompatActivity implements
                 new NavigationView.OnNavigationItemSelectedListener() {
                     @Override
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
+                        Log.v(TAG, "OnNavigationItemSelectedListener. menuItem = " + menuItem.toString());
                         selectDrawerItem(menuItem);
                         return true;
                     }
@@ -209,10 +231,60 @@ public class MainActivity extends AppCompatActivity implements
         dlDrawerLayout.closeDrawers();
     }
 
+    //Create the ActionBarDrawerToggle
     private ActionBarDrawerToggle setupDrawerToggle() {
         // NOTE: Make sure you pass in a valid toolbar reference.  ActionBarDrawToggle() does not require it
         // and will not render the hamburger icon without it.
-        return new ActionBarDrawerToggle(this, dlDrawerLayout, tbToolbar, R.string.drawer_open,  R.string.drawer_close);
+        ActionBarDrawerToggle actionBarDrawerToggle =
+                new ActionBarDrawerToggle(this, dlDrawerLayout, tbToolbar, R.string.drawer_open,  R.string.drawer_close){
+            //Implement DrawerLayout.DrawerListener if needed
+        };
+
+        // Set a fallback click listener for the 'Home' icon when drawerIndicatorEnabled is set to false
+        // via setDrawerIndicatorEnabled(boolean)
+        actionBarDrawerToggle.setToolbarNavigationClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.v(TAG, "Home icon pressed (Back Navigation)");
+                if (upNavIsEnabled()){
+                    FragmentManager fragmentManager = getSupportFragmentManager();
+                    mToolbarTitle = fragmentManager.getBackStackEntryAt(getIndexLastFragment()).getName();
+                    getSupportFragmentManager().popBackStack();
+                }
+            }
+        });
+
+        actionBarDrawerToggle.setHomeAsUpIndicator(R.drawable.ic_back_chevron);
+
+        return actionBarDrawerToggle;
+    }
+
+    //TODO: Finish implmenting the switch between hamburger and back nav
+    private void refreshUi(){
+        Log.v(TAG, "Inside refreshUi()");
+        tbToolbar.setTitle(mToolbarTitle);
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(upNavEnabled);
+        actionBarDrawerToggle.setDrawerIndicatorEnabled(isDrawerIndicatorEnabled());
+//        actionBarDrawerToggle.setHomeAsUpIndicator(R.drawable.ic_back_chevron);
+
+    }
+
+    // Determine if back navigation is needed
+    private boolean upNavIsEnabled(){
+        return getSupportFragmentManager().getBackStackEntryCount() > 1;
+    }
+
+    // Determine if drawer menu icon is needed
+    private boolean isDrawerIndicatorEnabled(){
+        return !upNavIsEnabled();
+    }
+
+    private int getIndexCurrentFragment(){
+        return getSupportFragmentManager().getBackStackEntryCount() - 1;
+    }
+
+    private int getIndexLastFragment(){
+        return getSupportFragmentManager().getBackStackEntryCount() - 2;
     }
 
 
@@ -229,25 +301,25 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onTestRequested(){
         TestFragment testFragment = new TestFragment();
-        showFragment(testFragment, TestFragment.TAG, RegularScreen);
+        showFragment(testFragment, TestFragment.TAG, TestFragment.TITLE,RegularScreen);
     }
 
     @Override
     public void onAuthManagerRequested(){
         AuthManagerFragment authManagerFragment = new AuthManagerFragment();
-        showFragment(authManagerFragment, AuthManagerFragment.TAG, RegularScreen);
+        showFragment(authManagerFragment, AuthManagerFragment.TAG, AuthManagerFragment.TITLE, RegularScreen);
     }
 
     @Override
     public void onKurtinLoginNavRequested(){
         KurtinLoginFragment kurtinLoginFragment = new KurtinLoginFragment();
-        showFragment(kurtinLoginFragment, KurtinLoginFragment.TAG, FullScreen);
+        showFragment(kurtinLoginFragment, KurtinLoginFragment.TAG, KurtinLoginFragment.TITLE,FullScreen);
     }
 
     @Override
     public void onCategoriesNavRequested(){
         CategoriesFragment categoriesFragment = new CategoriesFragment();
-        showFragment(categoriesFragment, CategoriesFragment.TAG, RegularScreen);
+        showFragment(categoriesFragment, CategoriesFragment.TAG, CategoriesFragment.TITLE, RegularScreen);
     }
 
     //KurtinNavListener
@@ -255,31 +327,31 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onTestFragmentRequested(){
         TestFragment testFragment = new TestFragment();
-        showFragment(testFragment, TestFragment.TAG, RegularScreen);
+        showFragment(testFragment, TestFragment.TAG, TestFragment.TITLE, RegularScreen);
     }
 
     @Override
     public void onAuthManagerFragmentRequested(){
         AuthManagerFragment authManagerFragment = new AuthManagerFragment();
-        showFragment(authManagerFragment, AuthManagerFragment.TAG, RegularScreen);
+        showFragment(authManagerFragment, AuthManagerFragment.TAG, AuthManagerFragment.TITLE, RegularScreen);
     }
 
     @Override
     public void onKurtinLoginFragmentRequested() {
         KurtinLoginFragment kurtinLoginFragment = new KurtinLoginFragment();
-        showFragment(kurtinLoginFragment, KurtinLoginFragment.TAG, FullScreen);
+        showFragment(kurtinLoginFragment, KurtinLoginFragment.TAG, KurtinLoginFragment.TITLE, FullScreen);
     }
 
     @Override
     public void onCategoriesFragmentRequested(){
         CategoriesFragment categoriesFragment = new CategoriesFragment();
-        showFragment(categoriesFragment, CategoriesFragment.TAG, RegularScreen);
+        showFragment(categoriesFragment, CategoriesFragment.TAG, CategoriesFragment.TITLE,RegularScreen);
     }
 
     @Override
     public void onSchoolListFragmentRequested(String categoryTypeObjId){
         SchoolListFragment schoolListFragment = SchoolListFragment.newInstance(categoryTypeObjId);
-        showFragment(schoolListFragment, SchoolListFragment.TAG, RegularScreen);
+        showFragment(schoolListFragment, SchoolListFragment.TAG, SchoolListFragment.TITLE, RegularScreen);
     }
 
     //AuthenticationListener
@@ -293,15 +365,15 @@ public class MainActivity extends AppCompatActivity implements
         switch (platformType){
             case FACEBOOK:
                 FacebookLoginFragment facebookLoginFragment = FacebookLoginFragment.newInstance();
-                showFragment(facebookLoginFragment, FacebookLoginFragment.TAG, RegularScreen);
+                showFragment(facebookLoginFragment, FacebookLoginFragment.TAG, FacebookLoginFragment.TITLE, RegularScreen);
                 break;
             case TWITTER:
                 TwitterLoginFragment twitterLoginFragment = TwitterLoginFragment.newInstance(loginIsInProgress);
-                showFragment(twitterLoginFragment, TwitterLoginFragment.TAG, RegularScreen);
+                showFragment(twitterLoginFragment, TwitterLoginFragment.TAG, TwitterLoginFragment.TITLE, RegularScreen);
                 break;
             case INSTAGRAM:
                 InstagramLoginFragment instagramLoginFragment = InstagramLoginFragment.newInstance(loginIsInProgress);
-                showFragment(instagramLoginFragment, InstagramLoginFragment.TAG, RegularScreen);
+                showFragment(instagramLoginFragment, InstagramLoginFragment.TAG, InstagramLoginFragment.TITLE, RegularScreen);
                 break;
         }
     }
@@ -312,15 +384,15 @@ public class MainActivity extends AppCompatActivity implements
         switch (platform){
             case FACEBOOK:
                 FacebookLoginFragment facebookLoginFragment = FacebookLoginFragment.newInstance();
-                showFragment(facebookLoginFragment, FacebookLoginFragment.TAG, RegularScreen);
+                showFragment(facebookLoginFragment, FacebookLoginFragment.TAG, FacebookLoginFragment.TITLE,RegularScreen);
                 break;
             case TWITTER:
                 TwitterLoginFragment twitterLoginFragment = TwitterLoginFragment.newInstance(loginIsInProgress);
-                showFragment(twitterLoginFragment, TwitterLoginFragment.TAG, RegularScreen);
+                showFragment(twitterLoginFragment, TwitterLoginFragment.TAG, TwitterLoginFragment.TITLE,RegularScreen);
                 break;
             case INSTAGRAM:
                 InstagramLoginFragment instagramLoginFragment = InstagramLoginFragment.newInstance(loginIsInProgress);
-                showFragment(instagramLoginFragment, InstagramLoginFragment.TAG, RegularScreen);
+                showFragment(instagramLoginFragment, InstagramLoginFragment.TAG, InstagramLoginFragment.TITLE, RegularScreen);
                 break;
         }
     }
@@ -329,7 +401,7 @@ public class MainActivity extends AppCompatActivity implements
     public void onAuthenticationCompleted(AuthPlatform.PlatformType platformType){
         KurtinUser.setAuthenticationStatus(this, platformType, true);
         LoginFragment loginFragment = LoginFragment.newInstance();
-        showFragment(loginFragment, "loginFragment", RegularScreen);
+        showFragment(loginFragment, "loginFragment", "Login Fragment", RegularScreen);
     }
 
     @Override

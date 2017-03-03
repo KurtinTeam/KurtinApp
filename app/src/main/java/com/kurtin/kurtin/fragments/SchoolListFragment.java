@@ -5,9 +5,12 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.kurtin.kurtin.R;
 import com.kurtin.kurtin.adapters.SchoolListAdapter;
@@ -31,13 +34,14 @@ import java.util.List;
 public class SchoolListFragment extends Fragment {
 
     public static final String TAG = "SchoolListFragment";
+    public static final String TITLE = "Schools";
 
     private static final String CATEGORY_TYPE_OBJ_ID = "categoryTypeObjId";
 
     List<School> mSchools;
     RecyclerView rvSchools;
     SchoolListAdapter mSchoolListAdapter;
-
+    LinearLayout llProgress;
 
     public SchoolListFragment() {
         // Required empty public constructor
@@ -50,7 +54,7 @@ public class SchoolListFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_school_list, container, false);
         bindUiElements(view);
-        getCategoryType();
+        getCategory();
         return view;
     }
 
@@ -70,14 +74,16 @@ public class SchoolListFragment extends Fragment {
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         rvSchools.setLayoutManager(layoutManager);
         rvSchools.setAdapter(mSchoolListAdapter);
+        llProgress = (LinearLayout) view.findViewById(R.id.llProgress);
     }
 
-    private void getCategoryType(){
+    private void getCategory(){
+        llProgress.setVisibility(View.VISIBLE);
         Bundle args = getArguments();
-        String categoryTypeObjId = args.getString(CATEGORY_TYPE_OBJ_ID);
+        String categoryObjId = args.getString(CATEGORY_TYPE_OBJ_ID);
         ParseQuery<Category> categoryTypeQuery = Category.getQuery();
         categoryTypeQuery.fromLocalDatastore();
-        categoryTypeQuery.getInBackground(categoryTypeObjId, new GetCallback<Category>() {
+        categoryTypeQuery.getInBackground(categoryObjId, new GetCallback<Category>() {
             @Override
             public void done(Category category, ParseException e) {
                 loadSchools(category);
@@ -92,16 +98,37 @@ public class SchoolListFragment extends Fragment {
         categoryJoinQuery.findInBackground(new FindCallback<CategoryJoin>() {
             @Override
             public void done(List<CategoryJoin> categoryJoinList, ParseException e) {
-                List<School> schools = new ArrayList<>();
-                for (CategoryJoin categoryJoin: categoryJoinList){
-                    schools.add(categoryJoin.getSchool());
+                // Remove this if statement once all categories have schools attached to them
+                if(categoryJoinList.isEmpty()){
+                    Log.v(TAG, "categoryJoinList is empty " + categoryJoinList.toString());
+                    ParseQuery<School> schoolQuery = School.getQuery();
+                    schoolQuery.findInBackground(new FindCallback<School>() {
+                        @Override
+                        public void done(List<School> schools, ParseException e) {
+                            mSchools.clear();
+                            mSchools.addAll(schools);
+                            mSchoolListAdapter.notifyDataSetChanged();
+                            llProgress.setVisibility(View.GONE);
+                            ParseObject.pinAllInBackground(ParseLocal.CurrentSessionKey, schools);
+
+                            Toast.makeText(getContext(), "Showing generic School list.\nCategory coming soon.", Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }else {
+                    Log.v(TAG, "categoryJoinList is not empty " + categoryJoinList.toString());
+                    List<School> schools = new ArrayList<>();
+                    for (CategoryJoin categoryJoin : categoryJoinList) {
+                        schools.add(categoryJoin.getSchool());
+                    }
+                    mSchools.clear();
+                    mSchools.addAll(schools);
+                    mSchoolListAdapter.notifyDataSetChanged();
+                    llProgress.setVisibility(View.GONE);
+                    ParseObject.pinAllInBackground(ParseLocal.CurrentSessionKey, schools);
                 }
-                mSchools.clear();
-                mSchools.addAll(schools);
-                mSchoolListAdapter.notifyDataSetChanged();
-                ParseObject.pinAllInBackground(ParseLocal.CurrentSessionKey, schools);
             }
         });
+
     }
 
 }

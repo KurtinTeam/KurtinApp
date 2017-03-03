@@ -28,6 +28,7 @@ import org.scribe.model.Token;
 public class InstagramLoginFragment extends OAuthLoginFragment<InstagramClient> {
 
     public static final String TAG = "InstagramLoginFragment";
+    public static final String TITLE = "Instagram Login";
     public static final AuthPlatform.PlatformType INSTAGRAM = AuthPlatform.PlatformType.INSTAGRAM;
 
     private static final String LOGIN_IN_PROGRESS = "loginInProgress";

@@ -205,8 +205,9 @@ public class CategoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         Category category= (Category) mCategoryTiles.get(position);
         categoryVh.tvTitle.setText(category.getTitle());
         categoryVh.tvCaption.setText(category.getCaption());
-        Context context = viewHolder.itemView.getContext();
-        categoryVh.sdvImage.getHierarchy().setBackgroundImage(getColorAsDrawable(position, context));
+        categoryVh.sdvImage.setImageURI(category.getPictureUrl());
+//        Context context = viewHolder.itemView.getContext();
+//        categoryVh.sdvImage.getHierarchy().setBackgroundImage(getColorAsDrawable(position, context));
     }
 
     private Drawable getColorAsDrawable(int position, Context context){

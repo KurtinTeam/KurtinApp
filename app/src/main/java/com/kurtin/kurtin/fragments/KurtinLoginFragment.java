@@ -23,6 +23,8 @@ import static com.kurtin.kurtin.R.id.btnFacebookLogIn;
 public class KurtinLoginFragment extends Fragment {
 
     public static final String TAG = "KurtinLoginFragment";
+    public static final String TITLE = "Kurtin Login";
+
 
     private Button btnFacebook;
     private Button btnTwitter;

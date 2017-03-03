@@ -35,6 +35,8 @@ import java.util.List;
 public class TestFragment extends Fragment {
 
     public static final String TAG = "TestFragment";
+    public static final String TITLE = "App Testing";
+
 
     Button btnParseTest;
     Button btnFbApiTest;

@@ -10,8 +10,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.kurtin.kurtin.R;
 import com.kurtin.kurtin.adapters.CategoriesAdapter;
 import com.kurtin.kurtin.helpers.ItemClickSupport;
@@ -20,6 +23,7 @@ import com.kurtin.kurtin.models.BaseAd;
 import com.kurtin.kurtin.models.Category;
 import com.kurtin.kurtin.persistence.ParseLocal;
 import com.parse.FindCallback;
+import com.parse.GetCallback;
 import com.parse.ParseObject;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
@@ -35,17 +39,28 @@ import static com.kurtin.kurtin.fragments.CategoriesFragment.TileType.CATEGORY;
  */
 public class CategoriesFragment extends Fragment {
 
-    public static String TAG = "CategoriesFragment";
+    public static final String TAG = "CategoriesFragment";
+    public static final String TITLE = "Categories";
 
     RecyclerView rvCategories;
     GridLayoutManager.SpanSizeLookup mSpanSizeLookup;
     CategoriesAdapter mCategoriesAdapter;
     List<ParseObject> mCategoryTiles;
     KurtinNavListener mKurtinNavListener;
+    LinearLayout llProgress;
+
+    boolean mCategoriesReceived;
+    boolean mAdsReceived;
+
+    //Base ad view
+    TextView tvTitle;
+    TextView tvCaption;
+    SimpleDraweeView sdvBanner;
 
     public enum TileType{
         AD, CATEGORY
     }
+
 
 
     public CategoriesFragment() {
@@ -59,7 +74,7 @@ public class CategoriesFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_categories, container, false);
         bindUiElements(view);
-        getCategories(view);
+        getContent(view);
         return view;
     }
 
@@ -97,28 +112,53 @@ public class CategoriesFragment extends Fragment {
                 ParseObject parseObject = mCategoryTiles.get(position);
                 if (parseObject instanceof Category){
                     //Get schools in category
-                    String categoryTypeObjId = parseObject.getObjectId();
-                    mKurtinNavListener.onSchoolListFragmentRequested(categoryTypeObjId);
+                    String categoryObjId = parseObject.getObjectId();
+                    mKurtinNavListener.onSchoolListFragmentRequested(categoryObjId);
                 }else{
                     Toast.makeText(getContext(), "Content coming soon", Toast.LENGTH_SHORT).show();
                 }
             }
         });
+        llProgress = (LinearLayout) view.findViewById(R.id.llProgress);
+
+        //Base ad view
+        tvTitle = (TextView) view.findViewById(R.id.tvTitle);
+        tvCaption = (TextView) view.findViewById(R.id.tvCaption);
+        sdvBanner = (SimpleDraweeView) view.findViewById(R.id.sdvImage);
     }
 
-    private void getCategories(final View view){
+    private void getContent(final View view){
+        llProgress.setVisibility(View.VISIBLE);
+
+        // Get categories
+        mCategoriesReceived = false;
         ParseQuery<Category> categoryQuery = Category.getQuery();
         categoryQuery.findInBackground(new FindCallback<Category>() {
-            public void done(List<Category> categoryTypes, ParseException e) {
+            public void done(List<Category> categories, ParseException e) {
                 if (e == null) {
                     mCategoryTiles.clear();
-                    mCategoryTiles.addAll(createDataSet(categoryTypes));
+                    mCategoryTiles.addAll(categories);
                     mCategoriesAdapter.notifyDataSetChanged();
-                    ParseObject.pinAllInBackground(ParseLocal.CurrentSessionKey, categoryTypes);
+                    ParseObject.pinAllInBackground(ParseLocal.CurrentSessionKey, categories);
+                    mCategoriesReceived = true;
+                    dismissProgressBar();
                     Log.d(TAG, "CategoryTypes returned successfully");
                 } else {
                     Log.d("score", "Error: " + e.getMessage());
                 }
+            }
+        });
+
+        // Get banner data
+        ParseQuery<BaseAd> baseAdParseQuery = BaseAd.getQuery();
+        baseAdParseQuery.getFirstInBackground(new GetCallback<BaseAd>() {
+            @Override
+            public void done(BaseAd ad, ParseException e) {
+                tvTitle.setText(ad.getTitle());
+                tvCaption.setText(ad.getCaption());
+                sdvBanner.setImageURI(ad.getMediaUrl());
+                mAdsReceived = true;
+                dismissProgressBar();
             }
         });
     }
@@ -153,6 +193,12 @@ public class CategoriesFragment extends Fragment {
 
     private boolean isCategory(int position){
         return getTileType(position) == CATEGORY;
+    }
+
+    private void dismissProgressBar(){
+        if(mCategoriesReceived && mAdsReceived){
+            llProgress.setVisibility(View.GONE);
+        }
     }
 
 }

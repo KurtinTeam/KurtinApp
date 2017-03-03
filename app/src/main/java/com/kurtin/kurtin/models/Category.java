@@ -19,6 +19,7 @@ public class Category extends ParseObject {
     private static final String CATEGORY_ITEMS_KEY = "categoryItems";
     private static final String CAPTION_KEY = "caption";
     private static final String TITLE_KEY = "title";
+    private static final String PICTURE_KEY = "picture";
 
     public static ParseQuery<Category> getQuery(){
         return ParseQuery.getQuery(Category.class);
@@ -38,6 +39,10 @@ public class Category extends ParseObject {
 
     public String getTitle() {
         return getString(TITLE_KEY);
+    }
+
+    public String getPictureUrl(){
+        return getParseFile(PICTURE_KEY).getUrl();
     }
 
 }

@@ -3,6 +3,7 @@ package com.kurtin.kurtin.models;
 import com.parse.ParseClassName;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
 
 /**
  * Created by cvar on 2/23/17.
@@ -37,6 +38,10 @@ public class School extends ParseObject {
 
 
     //Getters
+    public static ParseQuery<School> getQuery(){
+        return ParseQuery.getQuery(School.class);
+    }
+
     public String getAdmissionsPhone() {
         return getString(ADMISSIONS_PHONE_KEY);
     }

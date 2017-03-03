@@ -29,6 +29,7 @@ import static com.kurtin.kurtin.R.id.rvPlatforms;
 public class AuthManagerFragment extends Fragment {
 
     public static final String TAG = "AuthManagerFragment";
+    public static final String TITLE = "Your Authorizations";
 
     private AuthenticationListener mAuthenticationListener;
 
