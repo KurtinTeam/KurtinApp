@@ -1,6 +1,7 @@
 package com.kurtin.kurtin.fragments;
 
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,6 +15,8 @@ import android.widget.Toast;
 
 import com.kurtin.kurtin.R;
 import com.kurtin.kurtin.adapters.SchoolListAdapter;
+import com.kurtin.kurtin.helpers.ItemClickSupport;
+import com.kurtin.kurtin.listeners.KurtinNavListener;
 import com.kurtin.kurtin.models.Category;
 import com.kurtin.kurtin.models.CategoryJoin;
 import com.kurtin.kurtin.models.School;
@@ -42,6 +45,9 @@ public class SchoolListFragment extends Fragment {
     RecyclerView rvSchools;
     SchoolListAdapter mSchoolListAdapter;
     LinearLayout llProgress;
+    Category mCategory;
+
+    KurtinNavListener mKurtinNavListener;
 
     public SchoolListFragment() {
         // Required empty public constructor
@@ -57,6 +63,25 @@ public class SchoolListFragment extends Fragment {
         getCategory();
         return view;
     }
+
+    @Override
+    public void onAttach(Context context){
+        super.onAttach(context);
+        try{
+            mKurtinNavListener = (KurtinNavListener) context;
+        }catch (Exception e){
+            mKurtinNavListener = null;
+            e.printStackTrace();
+            Log.e(TAG, "Must implement KurtinNavListener");
+        }
+    }
+
+    @Override
+    public void onDetach(){
+        super.onDetach();
+        mKurtinNavListener = null;
+    }
+
 
     public static SchoolListFragment newInstance(String categoryTypeObjId) {
 
@@ -74,6 +99,15 @@ public class SchoolListFragment extends Fragment {
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         rvSchools.setLayoutManager(layoutManager);
         rvSchools.setAdapter(mSchoolListAdapter);
+        ItemClickSupport.addTo(rvSchools).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
+            @Override
+            public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+                //Launch a school detail view.
+                Log.v(TAG, "Selected School: " + mSchools.get(position).getName() + " -> " + mSchools.get(position).getObjectId());
+                mKurtinNavListener.onSchoolDetailFragmentRequested(mSchools.get(position).getObjectId(), mCategory.getObjectId());
+
+            }
+        });
         llProgress = (LinearLayout) view.findViewById(R.id.llProgress);
     }
 
@@ -86,6 +120,7 @@ public class SchoolListFragment extends Fragment {
         categoryTypeQuery.getInBackground(categoryObjId, new GetCallback<Category>() {
             @Override
             public void done(Category category, ParseException e) {
+                mCategory = category;
                 loadSchools(category);
             }
         });
@@ -101,7 +136,9 @@ public class SchoolListFragment extends Fragment {
                 // Remove this if statement once all categories have schools attached to them
                 if(categoryJoinList.isEmpty()){
                     Log.v(TAG, "categoryJoinList is empty " + categoryJoinList.toString());
+                    int numSchools = 25;
                     ParseQuery<School> schoolQuery = School.getQuery();
+                    schoolQuery.setLimit(numSchools);
                     schoolQuery.findInBackground(new FindCallback<School>() {
                         @Override
                         public void done(List<School> schools, ParseException e) {

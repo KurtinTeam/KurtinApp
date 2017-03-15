@@ -2,8 +2,11 @@ package com.kurtin.kurtin.fragments;
 
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.customtabs.CustomTabsIntent;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -13,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ViewFlipper;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.kurtin.kurtin.R;
@@ -23,7 +27,6 @@ import com.kurtin.kurtin.models.BaseAd;
 import com.kurtin.kurtin.models.Category;
 import com.kurtin.kurtin.persistence.ParseLocal;
 import com.parse.FindCallback;
-import com.parse.GetCallback;
 import com.parse.ParseObject;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
@@ -53,9 +56,14 @@ public class CategoriesFragment extends Fragment {
     boolean mAdsReceived;
 
     //Base ad view
-    TextView tvTitle;
-    TextView tvCaption;
-    SimpleDraweeView sdvBanner;
+    private TextView tvTitle;
+    private TextView tvCaption;
+    private SimpleDraweeView sdvBanner;
+    private List<View> mAdViews;
+    private List<BaseAd> mAds;
+    private ViewFlipper vfCarousel;
+    private final int CAROUSEL_INTERVAL = 3000;
+
 
     public enum TileType{
         AD, CATEGORY
@@ -125,6 +133,7 @@ public class CategoriesFragment extends Fragment {
         tvTitle = (TextView) view.findViewById(R.id.tvTitle);
         tvCaption = (TextView) view.findViewById(R.id.tvCaption);
         sdvBanner = (SimpleDraweeView) view.findViewById(R.id.sdvImage);
+        vfCarousel = (ViewFlipper) view.findViewById(R.id.vfCarousel);
     }
 
     private void getContent(final View view){
@@ -133,6 +142,7 @@ public class CategoriesFragment extends Fragment {
         // Get categories
         mCategoriesReceived = false;
         ParseQuery<Category> categoryQuery = Category.getQuery();
+        categoryQuery.orderByAscending(Category.DISPLAY_ORDER_KEY);
         categoryQuery.findInBackground(new FindCallback<Category>() {
             public void done(List<Category> categories, ParseException e) {
                 if (e == null) {
@@ -150,13 +160,16 @@ public class CategoriesFragment extends Fragment {
         });
 
         // Get banner data
+        mAdsReceived = false;
         ParseQuery<BaseAd> baseAdParseQuery = BaseAd.getQuery();
-        baseAdParseQuery.getFirstInBackground(new GetCallback<BaseAd>() {
+        baseAdParseQuery.findInBackground(new FindCallback<BaseAd>() {
             @Override
-            public void done(BaseAd ad, ParseException e) {
-                tvTitle.setText(ad.getTitle());
-                tvCaption.setText(ad.getCaption());
-                sdvBanner.setImageURI(ad.getMediaUrl());
+            public void done(List<BaseAd> ads, ParseException e) {
+//                tvTitle.setText(ad.getTitle());
+//                tvCaption.setText(ad.getCaption());
+//                sdvBanner.setImageURI(ad.getMediaUrl());
+                mAds = ads;
+                initCarousel();
                 mAdsReceived = true;
                 dismissProgressBar();
             }
@@ -199,6 +212,36 @@ public class CategoriesFragment extends Fragment {
         if(mCategoriesReceived && mAdsReceived){
             llProgress.setVisibility(View.GONE);
         }
+    }
+
+    private void initCarousel(){
+        LayoutInflater layoutInflater = LayoutInflater.from(getContext());
+
+        vfCarousel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int index = vfCarousel.getDisplayedChild();
+                BaseAd ad = mAds.get(index);
+
+                //Prepare custom tabs
+                CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+                builder.setToolbarColor(ContextCompat.getColor(getContext(), R.color.kurtin_primary));
+                CustomTabsIntent customTabsIntent = builder.build();
+                customTabsIntent.launchUrl(getContext(), Uri.parse(ad.getTargetUrl()));
+//                Toast.makeText(getContext(), ad.getSource(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        for(BaseAd ad: mAds){
+            View adView = layoutInflater.inflate(R.layout.item_banner_ad, null, false);
+            ((TextView) adView.findViewById(R.id.tvTitle)).setText(ad.getTitle());
+            ((TextView) adView.findViewById(R.id.tvCaption)).setText(ad.getCaption());
+            ((SimpleDraweeView) adView.findViewById(R.id.sdvBanner)).setImageURI(ad.getMediaUrl());
+            vfCarousel.addView(adView);
+        }
+
+        vfCarousel.setFlipInterval(CAROUSEL_INTERVAL);
+        vfCarousel.startFlipping();
     }
 
 }

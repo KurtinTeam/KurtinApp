@@ -5,6 +5,8 @@ import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
+import org.json.JSONArray;
+
 /**
  * Created by cvar on 2/23/17.
  */
@@ -35,6 +37,8 @@ public class School extends ParseObject {
     private static final String STUDENT_BODY_KEY = "studentBody";
     private static final String TWITTER_ALT_URL_KEY = "twitterAltUrl";
     private static final String INSTAGRAM_ALT_URL_KEY = "instagramAltUrl";
+    private static final String FB_POSTS = "fbPosts";
+    private static final String TWEETS = "tweets";
 
 
     //Getters
@@ -132,6 +136,14 @@ public class School extends ParseObject {
 
     public String getTwScreenName() {
         return getString(TW_SCREEN_NAME_KEY);
+    }
+
+    public JSONArray getFbPosts(){
+        return getJSONArray(FB_POSTS);
+    }
+
+    public JSONArray getTweets(){
+        return getJSONArray(TWEETS);
     }
 
 }

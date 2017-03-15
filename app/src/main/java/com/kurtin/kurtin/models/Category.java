@@ -20,6 +20,7 @@ public class Category extends ParseObject {
     private static final String CAPTION_KEY = "caption";
     private static final String TITLE_KEY = "title";
     private static final String PICTURE_KEY = "picture";
+    public static final String DISPLAY_ORDER_KEY = "displayOrder";
 
     public static ParseQuery<Category> getQuery(){
         return ParseQuery.getQuery(Category.class);
@@ -43,6 +44,10 @@ public class Category extends ParseObject {
 
     public String getPictureUrl(){
         return getParseFile(PICTURE_KEY).getUrl();
+    }
+
+    public int getDisplayOrder(){
+        return getInt(DISPLAY_ORDER_KEY);
     }
 
 }

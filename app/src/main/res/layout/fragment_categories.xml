@@ -4,16 +4,21 @@
     android:layout_height="match_parent"
     tools:context="com.kurtin.kurtin.fragments.CategoriesFragment">
 
-    <include layout="@layout/item_cat"
-        android:id="@+id/rlCarousel"
-        />
+    <!--<include layout="@layout/item_cat"-->
+        <!--android:id="@+id/rlCarousel"-->
+        <!--/>-->
+
+    <ViewFlipper
+        android:id="@+id/vfCarousel"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"/>
 
     <!-- TODO: Update blank fragment layout -->
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rvCategories"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/rlCarousel"
+        android:layout_below="@id/vfCarousel"
         />
 
     <LinearLayout

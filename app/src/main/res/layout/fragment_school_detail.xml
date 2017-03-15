@@ -1,0 +1,42 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.kurtin.kurtin.fragments.SchoolDetailFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rvMedia"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <LinearLayout
+        android:id="@+id/llProgress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:visibility="gone"
+        >
+
+        <TextView
+            android:id="@+id/tvProgressMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/loading"
+            android:textSize="@dimen/title_text"
+            android:textStyle="bold"
+            android:textColor="@color/outer_space"
+            />
+
+        <ProgressBar
+            android:id="@+id/pbProgressBar"
+            android:layout_marginTop="16dp"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            />
+
+    </LinearLayout>
+
+</RelativeLayout>

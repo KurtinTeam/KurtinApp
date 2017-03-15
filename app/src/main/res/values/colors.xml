@@ -36,8 +36,8 @@
     <color name="kurtin_accent">@color/dogwood_rose</color>
     <color name="kurtin_text_light">#11a7be</color>
     <color name="kurtin_text_primary">#0e8698</color>
-    <color name="kurtin_primay_translucent">#cc063f48</color>
-    <color name="kurtin_primary_dark_translucent">#aa05323a</color>
+    <color name="kurtin_primary_translucent">#cc063f48</color>
+    <color name="kurtin_primary_dark_translucent">#cc05323a</color>
     <color name="kurtin_home_divider">@color/black</color>
 
 

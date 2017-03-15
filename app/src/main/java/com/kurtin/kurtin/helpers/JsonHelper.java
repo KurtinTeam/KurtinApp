@@ -75,4 +75,25 @@ public class JsonHelper {
             return null;
         }
     }
+
+    public static String getString(JSONObject jsonObject, String key){
+        String value;
+        try{
+            value = jsonObject.getString(key);
+            return value;
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static JSONObject getObjectFromArray(JSONArray jsonArray, int index){
+        try{
+            JSONObject jsonObject = jsonArray.getJSONObject(index);
+            return jsonObject;
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
 }

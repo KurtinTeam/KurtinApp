@@ -31,9 +31,9 @@ import java.util.List;
 
 public class CategoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    public static final String TAG = "";
+    public static final String TAG = "CategoriesAdapter";
 
-    public static final int SMALL = 0, MEDIUM = 1, LARGE = 2, AD = 3;
+    private static final int SMALL = 0, MEDIUM = 1, LARGE = 2, AD = 3;
 
 
     // The items to display in your RecyclerView

@@ -29,6 +29,7 @@ import com.kurtin.kurtin.fragments.FacebookLoginFragment;
 import com.kurtin.kurtin.fragments.InstagramLoginFragment;
 import com.kurtin.kurtin.fragments.KurtinLoginFragment;
 import com.kurtin.kurtin.fragments.LoginFragment;
+import com.kurtin.kurtin.fragments.SchoolDetailFragment;
 import com.kurtin.kurtin.fragments.SchoolListFragment;
 import com.kurtin.kurtin.fragments.TestFragment;
 import com.kurtin.kurtin.fragments.TwitterLoginFragment;
@@ -353,6 +354,13 @@ public class MainActivity extends AppCompatActivity implements
         SchoolListFragment schoolListFragment = SchoolListFragment.newInstance(categoryTypeObjId);
         showFragment(schoolListFragment, SchoolListFragment.TAG, SchoolListFragment.TITLE, RegularScreen);
     }
+
+    @Override
+    public void onSchoolDetailFragmentRequested(String schoolObjId, String categoryObjId){
+        SchoolDetailFragment schoolDetailFragment = SchoolDetailFragment.newInstance(schoolObjId, categoryObjId);
+        showFragment(schoolDetailFragment, SchoolDetailFragment.TAG, SchoolDetailFragment.TITLE, RegularScreen);
+    }
+
 
     //AuthenticationListener
     //**********************
