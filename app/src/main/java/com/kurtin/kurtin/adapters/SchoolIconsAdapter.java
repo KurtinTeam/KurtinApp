@@ -2,6 +2,7 @@ package com.kurtin.kurtin.adapters;
 
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,9 @@ import java.util.List;
  */
 
 public class SchoolIconsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
+    public static final String TAG = "";
+
     List<School> mSchools;
 
     private static class ViewHolder extends RecyclerView.ViewHolder{
@@ -59,7 +63,12 @@ public class SchoolIconsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
         School school = mSchools.get(position);
         SchoolIconsAdapter.ViewHolder vh = (ViewHolder) viewHolder;
-        vh.sdvIcon.setImageURI(school.getLogoImage().getUrl());
+        int width = vh.sdvIcon.getLayoutParams().width;
+        int height = vh.sdvIcon.getLayoutParams().height;
+        Log.d(TAG, "sdv width/height: " + width + " / " + height);
+        vh.sdvIcon.setController(ImageHelper
+                .getResizeController(vh.sdvIcon, school.getLogoImage().getUrl(), width, height));
+//        vh.sdvIcon.setImageURI(school.getLogoImage().getUrl());
         vh.tvSchoolName.setText(school.getName());
     }
 

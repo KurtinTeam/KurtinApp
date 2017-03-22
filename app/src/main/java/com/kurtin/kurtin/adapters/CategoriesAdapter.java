@@ -15,6 +15,7 @@ import com.facebook.drawee.generic.GenericDraweeHierarchy;
 import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.kurtin.kurtin.R;
+import com.kurtin.kurtin.helpers.ImageHelper;
 import com.kurtin.kurtin.helpers.ScreenUtils;
 import com.kurtin.kurtin.models.BaseAd;
 import com.kurtin.kurtin.models.Category;
@@ -39,6 +40,7 @@ public class CategoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     // The items to display in your RecyclerView
     private List<ParseObject> mCategoryTiles;
     private int mViewType;
+    private int mScreenWidth;
     private Context mContext;
 
     private static class CategoryVh extends RecyclerView.ViewHolder {
@@ -126,9 +128,10 @@ public class CategoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public CategoriesAdapter(List<ParseObject> categoryTiles) {
+    public CategoriesAdapter(List<ParseObject> categoryTiles, Context context) {
         mCategoryTiles = categoryTiles;
         mViewType = SMALL;
+        mScreenWidth = ScreenUtils.getWidth(context, ScreenUtils.USABLE_SCREEN);
     }
 
     public void setViewType(int viewType) {
@@ -206,6 +209,11 @@ public class CategoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         categoryVh.tvTitle.setText(category.getTitle());
         categoryVh.tvCaption.setText(category.getCaption());
         categoryVh.sdvImage.setImageURI(category.getPictureUrl());
+
+        int tileDim = mScreenWidth/3;
+        categoryVh.sdvImage.setController(ImageHelper.getResizeController(
+                categoryVh.sdvImage, category.getPictureUrl(), tileDim, tileDim));
+
 //        Context context = viewHolder.itemView.getContext();
 //        categoryVh.sdvImage.getHierarchy().setBackgroundImage(getColorAsDrawable(position, context));
     }

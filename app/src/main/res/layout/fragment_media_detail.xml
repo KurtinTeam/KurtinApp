@@ -1,13 +1,69 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:fresco="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.kurtin.kurtin.fragments.MediaDetailFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout
+        android:id="@+id/llHeader"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content">
 
-</FrameLayout>
+        <com.facebook.drawee.view.SimpleDraweeView
+            android:id="@+id/sdvLogo"
+            android:layout_width="64dp"
+            android:layout_height="64dp" />
+
+        <TextView
+            android:id="@+id/tvSchoolName"
+            android:layout_width="wrap_content"
+            android:layout_height="64dp"
+            android:text="School Name"
+            android:textSize="@dimen/title_text"
+            android:gravity="center_vertical"
+            />
+
+    </LinearLayout>
+
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/sdvMediaImage"
+        android:layout_width="match_parent"
+        android:layout_height="350dp"
+        android:layout_below="@id/llHeader"
+        fresco:placeholderImage="@drawable/"
+        />
+
+    <LinearLayout
+        android:id="@+id/llMediaInfo"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:layout_below="@+id/sdvMediaImage"
+        >
+
+        <com.facebook.drawee.view.SimpleDraweeView
+            android:id="@+id/sdvPlatformIcon"
+            android:layout_width="64dp"
+            android:layout_height="64dp" />
+
+        <TextView
+            android:id="@+id/tvPlatformName"
+            android:layout_width="wrap_content"
+            android:layout_height="64dp"
+            android:text="UserId/ScreenName"
+            android:textSize="@dimen/subtitle_text"
+            android:gravity="center_vertical"
+            />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvMediaText"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:text="Media Text"
+        android:textSize="@dimen/content_text"
+        android:layout_below="@id/llMediaInfo"
+        />
+
+</RelativeLayout>

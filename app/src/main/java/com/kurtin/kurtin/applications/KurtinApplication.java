@@ -5,6 +5,7 @@ import android.content.res.Configuration;
 
 import com.facebook.FacebookSdk;
 import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.imagepipeline.core.ImagePipelineConfig;
 import com.kurtin.kurtin.R;
 import com.kurtin.kurtin.clients.InstagramClient;
 import com.kurtin.kurtin.clients.TwitterClient;
@@ -59,6 +60,9 @@ public class KurtinApplication extends Application {
         FacebookSdk.sdkInitialize(getApplicationContext());
 
         //Fresco
+        ImagePipelineConfig config = ImagePipelineConfig.newBuilder(this)
+                .setDownsampleEnabled(true)
+                .build();
         Fresco.initialize(this);
 
         //Twitter Client

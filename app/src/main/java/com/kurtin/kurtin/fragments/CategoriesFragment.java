@@ -21,19 +21,24 @@ import android.widget.ViewFlipper;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.kurtin.kurtin.R;
 import com.kurtin.kurtin.adapters.CategoriesAdapter;
+import com.kurtin.kurtin.helpers.ImageHelper;
 import com.kurtin.kurtin.helpers.ItemClickSupport;
+import com.kurtin.kurtin.helpers.ScreenUtils;
 import com.kurtin.kurtin.listeners.KurtinNavListener;
 import com.kurtin.kurtin.models.BaseAd;
 import com.kurtin.kurtin.models.Category;
-import com.kurtin.kurtin.persistence.ParseLocal;
+import com.kurtin.kurtin.persistence.ParseLocalPrefs;
+import com.parse.DeleteCallback;
 import com.parse.FindCallback;
 import com.parse.ParseObject;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
+import com.parse.SaveCallback;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.R.attr.category;
 import static com.kurtin.kurtin.fragments.CategoriesFragment.TileType.AD;
 import static com.kurtin.kurtin.fragments.CategoriesFragment.TileType.CATEGORY;
 
@@ -79,6 +84,7 @@ public class CategoriesFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_categories, container, false);
         bindUiElements(view);
@@ -107,7 +113,7 @@ public class CategoriesFragment extends Fragment {
     private void bindUiElements(View view){
         rvCategories = (RecyclerView) view.findViewById(R.id.rvCategories);
         mCategoryTiles = new ArrayList<>();
-        mCategoriesAdapter = new CategoriesAdapter(mCategoryTiles);
+        mCategoriesAdapter = new CategoriesAdapter(mCategoryTiles, getContext());
         initSpanLookup();
         int numberOfColumns = 6;
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), numberOfColumns);
@@ -120,7 +126,18 @@ public class CategoriesFragment extends Fragment {
                 ParseObject parseObject = mCategoryTiles.get(position);
                 if (parseObject instanceof Category){
                     //Get schools in category
-                    String categoryObjId = parseObject.getObjectId();
+                    Category category = (Category) parseObject;
+                    String oldSelectedCategoryId = ParseLocalPrefs.getSelectedCategoryId(getContext());
+                    if (oldSelectedCategoryId != null){
+                        if(!oldSelectedCategoryId.equals(category.getObjectId())){
+                            ParseLocalPrefs.setCategorySchoolsAreSaved(getContext(), false);
+                        }
+                    }
+
+                    ParseLocalPrefs.setSelectedCategoryName(getContext(), category.getName());
+                    ParseLocalPrefs.setSelectedCategoryId(getContext(), category.getObjectId());
+
+                    String categoryObjId = null;
                     mKurtinNavListener.onSchoolListFragmentRequested(categoryObjId);
                 }else{
                     Toast.makeText(getContext(), "Content coming soon", Toast.LENGTH_SHORT).show();
@@ -142,16 +159,29 @@ public class CategoriesFragment extends Fragment {
         // Get categories
         mCategoriesReceived = false;
         ParseQuery<Category> categoryQuery = Category.getQuery();
-        categoryQuery.orderByAscending(Category.DISPLAY_ORDER_KEY);
+        if (ParseLocalPrefs.categoriesAreSaved(getContext())){
+            Log.v(TAG, "Getting Categories from local data");
+            categoryQuery.fromPin(ParseLocalPrefs.SESSION_PIN);
+        }else{
+            Log.v(TAG, "Getting Categories from remote data");
+        }
+//        categoryQuery.orderByAscending(Category.DISPLAY_ORDER_KEY);
         categoryQuery.findInBackground(new FindCallback<Category>() {
             public void done(List<Category> categories, ParseException e) {
                 if (e == null) {
+                    if (!ParseLocalPrefs.categoriesAreSaved(getContext())) {
+                        ParseObject.pinAllInBackground(ParseLocalPrefs.SESSION_PIN, categories,
+                                new SaveCallback() {
+                                    @Override
+                                    public void done(ParseException e) {
+                                        ParseLocalPrefs.setCategoriesAreSaved(getContext(), true);
+                                    }
+                                });
+                    }
                     mCategoryTiles.clear();
                     mCategoryTiles.addAll(categories);
-                    mCategoriesAdapter.notifyDataSetChanged();
-                    ParseObject.pinAllInBackground(ParseLocal.CurrentSessionKey, categories);
                     mCategoriesReceived = true;
-                    dismissProgressBar();
+                    showDisplay();
                     Log.d(TAG, "CategoryTypes returned successfully");
                 } else {
                     Log.d("score", "Error: " + e.getMessage());
@@ -165,13 +195,10 @@ public class CategoriesFragment extends Fragment {
         baseAdParseQuery.findInBackground(new FindCallback<BaseAd>() {
             @Override
             public void done(List<BaseAd> ads, ParseException e) {
-//                tvTitle.setText(ad.getTitle());
-//                tvCaption.setText(ad.getCaption());
-//                sdvBanner.setImageURI(ad.getMediaUrl());
                 mAds = ads;
                 initCarousel();
                 mAdsReceived = true;
-                dismissProgressBar();
+                showDisplay();
             }
         });
     }
@@ -208,9 +235,10 @@ public class CategoriesFragment extends Fragment {
         return getTileType(position) == CATEGORY;
     }
 
-    private void dismissProgressBar(){
+    private void showDisplay(){
         if(mCategoriesReceived && mAdsReceived){
             llProgress.setVisibility(View.GONE);
+            mCategoriesAdapter.notifyDataSetChanged();
         }
     }
 
@@ -232,11 +260,23 @@ public class CategoriesFragment extends Fragment {
             }
         });
 
+        Integer width = null;
+        Integer height = null;
         for(BaseAd ad: mAds){
             View adView = layoutInflater.inflate(R.layout.item_banner_ad, null, false);
             ((TextView) adView.findViewById(R.id.tvTitle)).setText(ad.getTitle());
             ((TextView) adView.findViewById(R.id.tvCaption)).setText(ad.getCaption());
-            ((SimpleDraweeView) adView.findViewById(R.id.sdvBanner)).setImageURI(ad.getMediaUrl());
+
+            SimpleDraweeView sdvBanner = (SimpleDraweeView) adView.findViewById(R.id.sdvBanner);
+            if (width == null) {
+                width = ScreenUtils.getWidth(getContext(), ScreenUtils.ScreenType.USABLE_SCREEN);
+            }
+            if(height == null) {
+                height = vfCarousel.getLayoutParams().height;
+            }
+            sdvBanner.setController(ImageHelper.getResizeController(sdvBanner, ad.getMediaUrl(), width, height));
+
+//            ((SimpleDraweeView) adView.findViewById(R.id.sdvBanner)).setImageURI(ad.getMediaUrl());
             vfCarousel.addView(adView);
         }
 

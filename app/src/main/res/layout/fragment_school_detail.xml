@@ -39,4 +39,9 @@
 
     </LinearLayout>
 
+    <include layout="@layout/item_media_detail"
+        android:id="@+id/rlMediaDetail"
+        android:visibility="gone"
+        />
+
 </RelativeLayout>

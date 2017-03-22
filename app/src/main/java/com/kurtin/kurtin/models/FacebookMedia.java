@@ -19,6 +19,7 @@ import static android.os.Build.VERSION_CODES.M;
 
 public class FacebookMedia extends Media {
     private String mFullPictureUrl;
+    private String mThumbnailUrl;
     private String mVideoSource;
     private FacebookMediaType mFacebookMediaType;
     private String mMessage;
@@ -52,6 +53,7 @@ public class FacebookMedia extends Media {
         super(MediaType.FACEBOOK);
         mFacebookMediaType = FacebookMediaType.valueToType(JsonHelper.getString(fbPostObject, Keys.TYPE_KEY));
         mFullPictureUrl = JsonHelper.getString(fbPostObject, Keys.FULL_PICTURE_KEY);
+        mThumbnailUrl = JsonHelper.getString(fbPostObject, Keys.THUMBNAIL_KEY);
         mVideoSource = JsonHelper.getString(fbPostObject, Keys.VIDEO_SOURCE_KEY);
         mMessage = JsonHelper.getString(fbPostObject, Keys.MESSAGE_KEY);
     }
@@ -61,7 +63,9 @@ public class FacebookMedia extends Media {
         for(int index=0; index<fbPosts.length(); index++){
             JSONObject fbPost = JsonHelper.getObjectFromArray(fbPosts, index);
             if (fbPost != null){
-                facebookMediaList.add(new FacebookMedia(fbPost));
+                if (JsonHelper.getString(fbPost, Keys.FULL_PICTURE_KEY) != null) {
+                    facebookMediaList.add(new FacebookMedia(fbPost));
+                }
             }
         }
         return facebookMediaList;
@@ -75,6 +79,10 @@ public class FacebookMedia extends Media {
         return mFullPictureUrl;
     }
 
+    public String getThumbnailUrl() {
+        return mThumbnailUrl;
+    }
+
     public String getMessage() {
         return mMessage;
     }
@@ -86,6 +94,7 @@ public class FacebookMedia extends Media {
     private static class Keys{
         private static final String TYPE_KEY = "type";
         private static final String FULL_PICTURE_KEY = "full_picture";
+        private static final String THUMBNAIL_KEY = "picture";
         private static final String MESSAGE_KEY = "message";
         private static final String VIDEO_SOURCE_KEY = "source";
     }

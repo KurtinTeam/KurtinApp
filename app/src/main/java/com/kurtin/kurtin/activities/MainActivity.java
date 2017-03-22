@@ -2,6 +2,7 @@ package com.kurtin.kurtin.activities;
 
 import android.content.res.Configuration;
 import android.net.Uri;
+import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -52,15 +53,16 @@ public class MainActivity extends AppCompatActivity implements
 
     private static final String TAG = "MainActivity";
 
+    //Fragment screens
     private FrameLayout flRegularScreen;
     private FrameLayout flFullScreen;
-
     //Nav Drawer and toolbar
     private DrawerLayout dlDrawerLayout;
     private Toolbar tbToolbar;
     private NavigationView nvNavigationView;
     private ActionBarDrawerToggle actionBarDrawerToggle;
-
+    //Bottom nav for school detail
+    BottomNavigationView bnvSchoolDetailNav;
     private String mToolbarTitle;
 
     private Boolean mLoginInProgress;
@@ -144,6 +146,8 @@ public class MainActivity extends AppCompatActivity implements
         // We can now look up items within the header if needed
 //        SimpleDraweeView sdvHeaderPhoto = (SimpleDraweeView) headerLayout.findViewById(R.id.sdvProfileImage);
         setupDrawerContent(nvNavigationView);
+
+        bnvSchoolDetailNav = (BottomNavigationView) findViewById(R.id.bnvSchoolDetailNav);
     }
 
 
@@ -288,6 +292,32 @@ public class MainActivity extends AppCompatActivity implements
         return getSupportFragmentManager().getBackStackEntryCount() - 2;
     }
 
+    public void hideToolbar(){
+        tbToolbar.setVisibility(View.GONE);
+    }
+
+    public void showToolbar(){
+        tbToolbar.setVisibility(View.VISIBLE);
+    }
+
+    public void showSchoolDetailBottomNav(boolean animate){
+        bnvSchoolDetailNav.setVisibility(View.VISIBLE);
+    }
+
+    public void hideSchoolDetailBottomNav(boolean animate){
+        bnvSchoolDetailNav.setVisibility(View.GONE);
+    }
+
+    public void showSchoolDetailMediaView(){
+        hideToolbar();
+    bnvSchoolDetailNav.setVisibility(View.GONE);
+}
+
+    public void hideSchoolDetailMediaView(){
+        showToolbar();
+        bnvSchoolDetailNav.setVisibility(View.VISIBLE);
+    }
+
 
     //*
     //**
@@ -356,8 +386,8 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onSchoolDetailFragmentRequested(String schoolObjId, String categoryObjId){
-        SchoolDetailFragment schoolDetailFragment = SchoolDetailFragment.newInstance(schoolObjId, categoryObjId);
+    public void onSchoolDetailFragmentRequested(String schoolObjId, String categoryObjId, String categoryName){
+        SchoolDetailFragment schoolDetailFragment = SchoolDetailFragment.newInstance(schoolObjId, categoryObjId, categoryName);
         showFragment(schoolDetailFragment, SchoolDetailFragment.TAG, SchoolDetailFragment.TITLE, RegularScreen);
     }
 

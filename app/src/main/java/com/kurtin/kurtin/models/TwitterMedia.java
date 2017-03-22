@@ -1,5 +1,7 @@
 package com.kurtin.kurtin.models;
 
+import android.graphics.Point;
+
 import com.kurtin.kurtin.helpers.JsonHelper;
 
 import org.json.JSONArray;
@@ -19,6 +21,7 @@ public class TwitterMedia extends Media {
     private String mPictureUrl;
     private TwitterMediaType mTwitterMediaType;
     private String mFullText;
+    private Point mMediaDims;
 //    private String mVideoSource;
 
     private enum TwitterMediaType{
@@ -51,6 +54,7 @@ public class TwitterMedia extends Media {
         mTwitterMediaType = TwitterMediaType.valueToType(JsonHelper.getString(mediaObject, Keys.TYPE_KEY));
         mPictureUrl = JsonHelper.getString(mediaObject, Keys.MEDIA_URL_HTTPS_KEY);
         mFullText = fullText;
+        mMediaDims = getMediaDims(mediaObject);
     }
 
     public static List<TwitterMedia> twitterMediaListFromJsonArray(JSONArray tweetObjects){
@@ -68,29 +72,7 @@ public class TwitterMedia extends Media {
         return twitterMediaList;
     }
 
-//    public static String getMediaUrl(JSONObject tweetObject){
-//        String mediaUrl = null;
-//        try{
-//            mediaUrl = tweetObject.
-//                    getJSONObject(Keys.ENTITIES_KEY).
-//                    getJSONArray(Keys.MEDIA_KEY).
-//                    getJSONObject(Keys.FIRST_MEDIA_ITEM_INDEX).
-//                    getString(Keys.MEDIA_URL_HTTPS_KEY);
-//        }catch (JSONException entitiesJsonException){
-//            try{
-//                mediaUrl = tweetObject.
-//                        getJSONObject(Keys.ENTITIES_KEY).
-//                        getJSONArray(Keys.MEDIA_KEY).
-//                        getJSONObject(Keys.FIRST_MEDIA_ITEM_INDEX).
-//                        getString(Keys.MEDIA_URL_HTTPS_KEY);
-//            }catch (JSONException extendedEntitiesJsonException){
-//
-//            }
-//        }
-//        return mediaUrl;
-//    }
-
-    public static JSONObject getMediaObject(JSONObject tweetObject){
+    private static JSONObject getMediaObject(JSONObject tweetObject){
         JSONObject mediaObject = null;
         try{
             mediaObject = tweetObject.
@@ -110,6 +92,21 @@ public class TwitterMedia extends Media {
         return mediaObject;
     }
 
+    private static Point getMediaDims(JSONObject mediaObject){
+        Point point = new Point();
+        try{
+            JSONObject sizeObject = mediaObject.
+                    getJSONObject(Keys.SIZES_KEY).
+                    getJSONObject(Keys.LARGE_SIZE_KEY);
+            point.x = sizeObject.getInt(Keys.WIDTH_KEY);
+            point.y = sizeObject.getInt(Keys.HEIGHT_KEY);
+        }catch (JSONException entitiesJsonException) {
+            point = null;
+        }
+
+        return point;
+    }
+
     public TwitterMediaType getTwitterMediaType() {
         return mTwitterMediaType;
     }
@@ -122,6 +119,10 @@ public class TwitterMedia extends Media {
         return mFullText;
     }
 
+    public Point getMediaDims(){
+        return mMediaDims;
+    }
+
     private static class Keys{
         private static final String TYPE_KEY = "type";
         private static final String MEDIA_URL_HTTPS_KEY = "media_url_https";
@@ -130,6 +131,10 @@ public class TwitterMedia extends Media {
         private static final String EXTENDED_ENTITIES_KEY = "extended_entities";
         private static final String MEDIA_KEY = "media";
         private static final Integer FIRST_MEDIA_ITEM_INDEX = 0;
+        private static final String SIZES_KEY = "sizes";
+        private static final String LARGE_SIZE_KEY = "large";
+        private static final String WIDTH_KEY = "w";
+        private static final String HEIGHT_KEY = "h";
 //        private static final String VIDEO_SOURCE_KEY = "source";
     }
 

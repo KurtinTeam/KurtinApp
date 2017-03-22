@@ -2,6 +2,7 @@ package com.kurtin.kurtin.models;
 
 import com.parse.ParseClassName;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseRelation;
 
 /**
@@ -14,10 +15,14 @@ import com.parse.ParseRelation;
 @ParseClassName("CategoryJoin")
 public class CategoryJoin extends ParseObject {
 
-    private static final String CATEGORY_NAME_KEY = "categoryName";
+    public static final String CATEGORY_NAME_KEY = "categoryName";
     private static final String SCHOOL_NAME_KEY = "schoolName";
     private static final String SCHOOL_RANK_KEY = "schoolRank";
     public static final String SCHOOL_KEY = "school";
+
+    public static ParseQuery<CategoryJoin> getQuery(){
+        return ParseQuery.getQuery(CategoryJoin.class);
+    }
 
     public String getCategoryName() {
         return getString(CATEGORY_NAME_KEY);

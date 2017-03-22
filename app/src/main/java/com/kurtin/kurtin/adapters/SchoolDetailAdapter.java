@@ -215,14 +215,26 @@ public class SchoolDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         Log.v(TAG, "Inside configurePhoto");
         TileVh tileVh = (TileVh) viewHolder;
         FacebookMedia facebookMedia = (FacebookMedia) mMediaList.get(position);
-        tileVh.sdvPhoto.setImageURI(facebookMedia.getFullPictureUrl());
+//        tileVh.sdvPhoto.setImageURI(facebookMedia.getThumbnailUrl());
+        int tileDim = mScreenWidth/3;
+        String urlString = facebookMedia.getFullPictureUrl();
+        if (urlString == null){
+            tileVh.sdvPhoto.setController(ImageHelper.getResizeController(
+                    tileVh.sdvPhoto, "http://shashgrewal.com/wp-content/uploads/2015/05/default-placeholder.png", tileDim, tileDim));
+        }else {
+            tileVh.sdvPhoto.setController(ImageHelper.getResizeController(
+                    tileVh.sdvPhoto, facebookMedia.getFullPictureUrl(), tileDim, tileDim));
+        }
     }
 
     private void configureTwTile(RecyclerView.ViewHolder viewHolder, int position){
         Log.v(TAG, "Inside configurePhoto");
         TileVh tileVh = (TileVh) viewHolder;
         TwitterMedia twitterMedia = (TwitterMedia) mMediaList.get(position);
-        tileVh.sdvPhoto.setImageURI(twitterMedia.getPictureUrl());
+//        tileVh.sdvPhoto.setImageURI(twitterMedia.getPictureUrl());
+        int tileDim = mScreenWidth/3;
+        tileVh.sdvPhoto.setController(ImageHelper.getResizeController(
+                tileVh.sdvPhoto, twitterMedia.getPictureUrl(), tileDim, tileDim));
     }
 
     private void configureSimilarSchools(RecyclerView.ViewHolder viewHolder, int position){

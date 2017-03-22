@@ -7,6 +7,9 @@ import com.parse.ParseQuery;
 
 import org.json.JSONArray;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Created by cvar on 2/23/17.
  */
@@ -39,6 +42,8 @@ public class School extends ParseObject {
     private static final String INSTAGRAM_ALT_URL_KEY = "instagramAltUrl";
     private static final String FB_POSTS = "fbPosts";
     private static final String TWEETS = "tweets";
+    public static final List<String> BASIC_DISPLAY_KEYS = Arrays.asList("name", "state", "city", "studentImage", "logoImage");
+
 
 
     //Getters
