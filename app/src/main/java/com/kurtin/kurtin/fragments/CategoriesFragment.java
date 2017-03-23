@@ -155,12 +155,15 @@ public class CategoriesFragment extends Fragment {
 
     private void getContent(final View view){
         llProgress.setVisibility(View.VISIBLE);
+        mCategoriesReceived = false;
+        mAdsReceived = false;
 
         // Get categories
-        mCategoriesReceived = false;
         ParseQuery<Category> categoryQuery = Category.getQuery();
         if (ParseLocalPrefs.categoriesAreSaved(getContext())){
             Log.v(TAG, "Getting Categories from local data");
+            //TODO: make it so you only take from the pin within some period of time
+            //TODO: since the last remote refresh
             categoryQuery.fromPin(ParseLocalPrefs.SESSION_PIN);
         }else{
             Log.v(TAG, "Getting Categories from remote data");
@@ -190,13 +193,11 @@ public class CategoriesFragment extends Fragment {
         });
 
         // Get banner data
-        mAdsReceived = false;
         ParseQuery<BaseAd> baseAdParseQuery = BaseAd.getQuery();
         baseAdParseQuery.findInBackground(new FindCallback<BaseAd>() {
             @Override
             public void done(List<BaseAd> ads, ParseException e) {
                 mAds = ads;
-                initCarousel();
                 mAdsReceived = true;
                 showDisplay();
             }
@@ -212,15 +213,15 @@ public class CategoriesFragment extends Fragment {
         };
     }
 
-    private List<ParseObject> createDataSet(List<Category> categoryTypes){
-        List<ParseObject> list = new ArrayList<>();
-        BaseAd ad = new BaseAd();
-        ad.setTitle("Drop Knowledge");
-        ad.setCaption("Students are taking control of the college admissions process");
-        list.add(ad);
-        list.addAll(categoryTypes);
-        return list;
-    }
+//    private List<ParseObject> createDataSet(List<Category> categoryTypes){
+//        List<ParseObject> list = new ArrayList<>();
+//        BaseAd ad = new BaseAd();
+//        ad.setTitle("Drop Knowledge");
+//        ad.setCaption("Students are taking control of the college admissions process");
+//        list.add(ad);
+//        list.addAll(categoryTypes);
+//        return list;
+//    }
 
     private TileType getTileType(int position){
         ParseObject parseObject = mCategoryTiles.get(position);
@@ -237,8 +238,9 @@ public class CategoriesFragment extends Fragment {
 
     private void showDisplay(){
         if(mCategoriesReceived && mAdsReceived){
-            llProgress.setVisibility(View.GONE);
             mCategoriesAdapter.notifyDataSetChanged();
+            initCarousel();
+            llProgress.setVisibility(View.GONE);
         }
     }
 

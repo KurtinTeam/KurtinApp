@@ -31,6 +31,7 @@ import com.kurtin.kurtin.fragments.InstagramLoginFragment;
 import com.kurtin.kurtin.fragments.KurtinLoginFragment;
 import com.kurtin.kurtin.fragments.LoginFragment;
 import com.kurtin.kurtin.fragments.SchoolDetailFragment;
+import com.kurtin.kurtin.fragments.SchoolDetailTabFragment;
 import com.kurtin.kurtin.fragments.SchoolListFragment;
 import com.kurtin.kurtin.fragments.TestFragment;
 import com.kurtin.kurtin.fragments.TwitterLoginFragment;
@@ -40,6 +41,7 @@ import com.kurtin.kurtin.models.AuthPlatform;
 import com.kurtin.kurtin.models.KurtinUser;
 import com.kurtin.kurtin.models.School;
 import com.kurtin.kurtin.persistence.LoginPreferences;
+import com.kurtin.kurtin.persistence.ParseLocalPrefs;
 import com.parse.ParseRelation;
 
 import static com.kurtin.kurtin.activities.MainActivity.ScreenType.FullScreen;
@@ -96,6 +98,8 @@ public class MainActivity extends AppCompatActivity implements
 
         //TODO: Look to delete this code
 //        mLoginInProgress = false;
+
+        clearParseLocalPrefs();
 
         showFirstFragment();
 
@@ -254,6 +258,7 @@ public class MainActivity extends AppCompatActivity implements
                 if (upNavIsEnabled()){
                     FragmentManager fragmentManager = getSupportFragmentManager();
                     mToolbarTitle = fragmentManager.getBackStackEntryAt(getIndexLastFragment()).getName();
+                    hideSchoolDetailBottomNav(false);
                     getSupportFragmentManager().popBackStack();
                 }
             }
@@ -264,14 +269,13 @@ public class MainActivity extends AppCompatActivity implements
         return actionBarDrawerToggle;
     }
 
-    //TODO: Finish implmenting the switch between hamburger and back nav
+    //TODO: Finish implementing the switch between hamburger and back nav
     private void refreshUi(){
         Log.v(TAG, "Inside refreshUi()");
         tbToolbar.setTitle(mToolbarTitle);
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(upNavEnabled);
         actionBarDrawerToggle.setDrawerIndicatorEnabled(isDrawerIndicatorEnabled());
 //        actionBarDrawerToggle.setHomeAsUpIndicator(R.drawable.ic_back_chevron);
-
     }
 
     // Determine if back navigation is needed
@@ -310,12 +314,25 @@ public class MainActivity extends AppCompatActivity implements
 
     public void showSchoolDetailMediaView(){
         hideToolbar();
-    bnvSchoolDetailNav.setVisibility(View.GONE);
-}
+        bnvSchoolDetailNav.setVisibility(View.GONE);
+    }
 
     public void hideSchoolDetailMediaView(){
         showToolbar();
         bnvSchoolDetailNav.setVisibility(View.VISIBLE);
+    }
+
+    private void clearParseLocalPrefs(){
+        Log.d(TAG, "Clearing Preferences");
+        ParseLocalPrefs.setCategorySchoolsAreSaved(this, false);
+        ParseLocalPrefs.setCategoriesAreSaved(this, false);
+        ParseLocalPrefs.setSelectedCategoryIsSaved(this, false);
+        ParseLocalPrefs.setSelectedSchoolIsSaved(this, false);
+        ParseLocalPrefs.setSelectedSchoolId(this, null);
+        ParseLocalPrefs.setSelectedCategoryId(this, null);
+        ParseLocalPrefs.setSelectedCategoryName(this, null);
+        ParseLocalPrefs.setSelectedSchoolName(this, null);
+        ParseLocalPrefs.setSelectedCategorySchoolNames(this, null);
     }
 
 
@@ -389,6 +406,12 @@ public class MainActivity extends AppCompatActivity implements
     public void onSchoolDetailFragmentRequested(String schoolObjId, String categoryObjId, String categoryName){
         SchoolDetailFragment schoolDetailFragment = SchoolDetailFragment.newInstance(schoolObjId, categoryObjId, categoryName);
         showFragment(schoolDetailFragment, SchoolDetailFragment.TAG, SchoolDetailFragment.TITLE, RegularScreen);
+    }
+
+    @Override
+    public void onSchoolDetailTabFragmentRequested(){
+        SchoolDetailTabFragment schoolDetailTabFragment = new SchoolDetailTabFragment();
+        showFragment(schoolDetailTabFragment, SchoolDetailTabFragment.TAG, SchoolDetailTabFragment.TITLE, RegularScreen);
     }
 
 

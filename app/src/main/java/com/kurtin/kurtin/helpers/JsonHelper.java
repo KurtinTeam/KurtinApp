@@ -96,4 +96,14 @@ public class JsonHelper {
             return null;
         }
     }
+
+    public static JSONObject getJsonObject(JSONObject parentObject, String key){
+        JSONObject value;
+        try{
+            return parentObject.getJSONObject(key);
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
 }

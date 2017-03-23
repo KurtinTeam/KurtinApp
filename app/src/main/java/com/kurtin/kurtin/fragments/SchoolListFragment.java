@@ -115,7 +115,7 @@ public class SchoolListFragment extends Fragment {
                 Log.v(TAG, "Selected School: " + selectedSchool.getName() + " -> " + selectedSchool.getObjectId());
                 ParseLocalPrefs.setSelectedSchoolName(getContext(), selectedSchool.getName());
                 ParseLocalPrefs.setSelectedSchoolId(getContext(), selectedSchool.getObjectId());
-                mKurtinNavListener.onSchoolDetailFragmentRequested(null, null, null);
+                mKurtinNavListener.onSchoolDetailTabFragmentRequested();
 //                mKurtinNavListener.onSchoolDetailFragmentRequested(mSchools.get(position).getObjectId(), mCategory.getObjectId(), mCategory.getName());
 
             }
@@ -192,12 +192,12 @@ public class SchoolListFragment extends Fragment {
             schoolQuery.findInBackground(new FindCallback<School>() {
                 @Override
                 public void done(List<School> schools, ParseException e) {
-                    ParseLocalPrefs.setCategorySchoolsAreSaved(getContext(), false);
+//                    ParseLocalPrefs.setCategorySchoolsAreSaved(getContext(), false);
                     final long secondQueryStartTime = System.currentTimeMillis();
                     Log.v(TAG, "First loadSchools Query took: " + (secondQueryStartTime - firstQueryStartTime) + " ms");
-                    // Remove this if statement once all categories have schools attached to them
+                    // TODO: Remove this if statement once all categories have schools attached to them
                     if (schools.isEmpty()) {
-                        Log.v(TAG, "No schools returned. Performing basic school search instead.");
+                        Log.v(TAG, "****** No schools returned. Performing basic school search instead. *******");
                         int numSchools = 25;
                         ParseQuery<School> schoolQuery = School.getQuery();
                         schoolQuery.setLimit(numSchools);
@@ -210,27 +210,29 @@ public class SchoolListFragment extends Fragment {
                                 mSchools.clear();
                                 mSchools.addAll(schools);
 
-                                final long pinOneStartTime = System.currentTimeMillis();
-                                ParseLocalPrefs.setCategorySchoolsAreSaved(getContext(), false);
-                                Log.d(TAG, "About to unpin category schools");
-                                ParseObject.unpinAllInBackground(ParseLocalPrefs.CATEGORY_SCHOOLS_PIN, new DeleteCallback() {
-                                    @Override
-                                    public void done(ParseException e) {
-                                        if (e == null) {
-                                            Log.d(TAG, "About to pin schools. Size of mSchools" + mSchools.size());
-                                            ParseObject.pinAllInBackground(ParseLocalPrefs.CATEGORY_SCHOOLS_PIN, mSchools, new SaveCallback() {
-                                                @Override
-                                                public void done(ParseException e) {
-                                                    ParseLocalPrefs.setCategorySchoolsAreSaved(getContext().getApplicationContext(), true);
-                                                    long pinEndTime = System.currentTimeMillis();
-                                                    Log.v(TAG, "School list pinning took: " + (pinEndTime - pinOneStartTime) / 1000.0 + " secs");
-                                                }
-                                            });
-                                        } else {
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                });
+//                                pinSchoolsAsync();
+
+//                                final long pinOneStartTime = System.currentTimeMillis();
+//                                ParseLocalPrefs.setCategorySchoolsAreSaved(getContext(), false);
+//                                Log.d(TAG, "About to unpin category schools");
+//                                ParseObject.unpinAllInBackground(ParseLocalPrefs.CATEGORY_SCHOOLS_PIN, new DeleteCallback() {
+//                                    @Override
+//                                    public void done(ParseException e) {
+//                                        if (e == null) {
+//                                            Log.d(TAG, "About to pin schools. Size of mSchools" + mSchools.size());
+//                                            ParseObject.pinAllInBackground(ParseLocalPrefs.CATEGORY_SCHOOLS_PIN, mSchools, new SaveCallback() {
+//                                                @Override
+//                                                public void done(ParseException e) {
+//                                                    ParseLocalPrefs.setCategorySchoolsAreSaved(getContext().getApplicationContext(), true);
+//                                                    long pinEndTime = System.currentTimeMillis();
+//                                                    Log.v(TAG, "School list pinning took: " + (pinEndTime - pinOneStartTime) / 1000.0 + " secs");
+//                                                }
+//                                            });
+//                                        } else {
+//                                            e.printStackTrace();
+//                                        }
+//                                    }
+//                                });
 
 //                                if (ParseLocalPrefs.categorySchoolsAreSaved(getContext())) {
 //                                    ParseLocalPrefs.setCategorySchoolsAreSaved(getContext(), false);
@@ -265,8 +267,6 @@ public class SchoolListFragment extends Fragment {
 //                                    });
 //                                }
 
-                                mSchools.clear();
-                                mSchools.addAll(schools);
                                 mSchoolListAdapter.notifyDataSetChanged();
                                 llProgress.setVisibility(View.GONE);
                                 Toast.makeText(getContext(), "Showing generic School list.\nCategory coming soon.", Toast.LENGTH_LONG).show();
@@ -276,32 +276,34 @@ public class SchoolListFragment extends Fragment {
                         mSchools.clear();
                         mSchools.addAll(schools);
 
-                        // Save results to local data store
-                        final long pinOneStartTime = System.currentTimeMillis();
-                        ParseLocalPrefs.setCategorySchoolsAreSaved(getContext(), false);
-                        Log.d(TAG, "About to unpin category schools");
-                        ParseObject.unpinAllInBackground(ParseLocalPrefs.CATEGORY_SCHOOLS_PIN, new DeleteCallback() {
-                            @Override
-                            public void done(ParseException e) {
-                                if (e == null) {
-                                    Log.d(TAG, "About to pin schools. Size of mSchools" + mSchools.size());
-                                    ParseObject.pinAllInBackground(ParseLocalPrefs.CATEGORY_SCHOOLS_PIN, mSchools, new SaveCallback() {
-                                        @Override
-                                        public void done(ParseException e) {
-                                            if (e==null) {
-                                                ParseLocalPrefs.setCategorySchoolsAreSaved(getContext().getApplicationContext(), true);
-                                                long pinEndTime = System.currentTimeMillis();
-                                                Log.v(TAG, "School list pinning took: " + (pinEndTime - pinOneStartTime) / 1000.0 + " secs");
-                                            }else{
-                                                e.printStackTrace();
-                                            }
-                                        }
-                                    });
-                                } else {
-                                    e.printStackTrace();
-                                }
-                            }
-                        });
+//                        pinSchoolsAsync();
+
+//                        // Save results to local data store
+//                        final long pinOneStartTime = System.currentTimeMillis();
+////                        ParseLocalPrefs.setCategorySchoolsAreSaved(getContext(), false);
+//                        Log.d(TAG, "About to unpin category schools");
+//                        ParseObject.unpinAllInBackground(ParseLocalPrefs.CATEGORY_SCHOOLS_PIN, new DeleteCallback() {
+//                            @Override
+//                            public void done(ParseException e) {
+//                                if (e == null) {
+//                                    Log.d(TAG, "About to pin schools. Size of mSchools" + mSchools.size());
+//                                    ParseObject.pinAllInBackground(ParseLocalPrefs.CATEGORY_SCHOOLS_PIN, mSchools, new SaveCallback() {
+//                                        @Override
+//                                        public void done(ParseException e) {
+//                                            if (e==null) {
+//                                                ParseLocalPrefs.setCategorySchoolsAreSaved(getContext().getApplicationContext(), true);
+//                                                long pinEndTime = System.currentTimeMillis();
+//                                                Log.v(TAG, "School list pinning took: " + (pinEndTime - pinOneStartTime) / 1000.0 + " secs");
+//                                            }else{
+//                                                e.printStackTrace();
+//                                            }
+//                                        }
+//                                    });
+//                                } else {
+//                                    e.printStackTrace();
+//                                }
+//                            }
+//                        });
 
 //                        if (ParseLocalPrefs.categorySchoolsAreSaved(getContext())) {
 //                            ParseLocalPrefs.setCategorySchoolsAreSaved(getContext(), false);
@@ -441,6 +443,49 @@ public class SchoolListFragment extends Fragment {
 //            }
 //        });
 
+    }
+
+    private void pinSchoolsAsync(){
+        final List<School> schools = new ArrayList<>();
+        schools.addAll(mSchools);
+        final Long startTime = System.currentTimeMillis();
+        ParseLocalPrefs.setCategorySchoolsAreSaved(getContext(), false);
+        Log.d(TAG, "About to unpin schools");
+//        ParseObject.unpinAllInBackground(ParseLocalPrefs.CATEGORY_SCHOOLS_PIN, new DeleteCallback() {
+        ParseObject.unpinAllInBackground(new DeleteCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e==null) {
+//                    Log.d(TAG, "unpinning schools finished");
+////                    ParseObject.pinAllInBackground(ParseLocalPrefs.CATEGORY_SCHOOLS_PIN, schools, new SaveCallback() {
+//                    Long fetchStart = System.currentTimeMillis();
+//                    for(School school: mSchools){
+//                        try {
+//                            school.fetchIfNeeded();
+//                        }catch (Exception exception){
+//                            exception.printStackTrace();
+//                        }
+//                    }
+//                    Long fetchEnd = System.currentTimeMillis();
+//                    Log.v(TAG, "fetch time: " + (fetchEnd-fetchStart) + " ms");
+                    ParseObject.pinAllInBackground(mSchools, new SaveCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            if (e==null){
+                                ParseLocalPrefs.setCategorySchoolsAreSaved(getContext(), true);
+                                Long endTime = System.currentTimeMillis();
+                                Log.d(TAG, "Pinned " + mSchools.size() + " schools in " + (endTime - startTime) + " ms.");
+                            }else{
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                }else{
+                    Log.e(TAG, "Error unpinning schools");
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
 }

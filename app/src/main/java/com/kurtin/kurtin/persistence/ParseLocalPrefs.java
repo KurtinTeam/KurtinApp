@@ -5,7 +5,6 @@ import android.content.Context;
 import java.util.List;
 import java.util.Set;
 
-import static com.kurtin.kurtin.models.CategoryJoin.CATEGORY_NAME_KEY;
 
 /**
  * Created by cvar on 2/23/17.
@@ -26,15 +25,15 @@ public class ParseLocalPrefs {
     public static final String CATEGORY_PIN = "categoryPin";
 
     //Data Keys
-    public static final String CATEGORIES_ARE_SAVED_KEY = "categoriesAreSaved";
-    public static final String CATEGORY_SCHOOLS_ARE_SAVED_KEY = "categorySchoolsAreSaved";
-    public static final String CATEGORY_IS_SAVED_KEY = "categoryIsSaved";
-    public static final String CATEGORY_SCHOOLS_KEY = "categorySchools";
-    public static final String CATEGORY_NAME_KEY = "categoryName";
-    public static final String CATEGORY_ID_KEY = "categoryId";
-    public static final String SCHOOL_IS_SAVED_KEY = "schoolIsSaved";
-    public static final String SCHOOL_NAME_KEY = "schoolName";
-    public static final String SCHOOL_ID_KEY = "schoolId";
+    private static final String CATEGORIES_ARE_SAVED_KEY = "categoriesAreSaved";
+    private static final String CATEGORY_SCHOOLS_ARE_SAVED_KEY = "categorySchoolsAreSaved";
+    private static final String CATEGORY_IS_SAVED_KEY = "categoryIsSaved";
+    private static final String CATEGORY_SCHOOLS_KEY = "categorySchools";
+    private static final String CATEGORY_NAME_KEY = "categoryName";
+    private static final String CATEGORY_ID_KEY = "categoryId";
+    private static final String SCHOOL_IS_SAVED_KEY = "schoolIsSaved";
+    private static final String SCHOOL_NAME_KEY = "schoolName";
+    private static final String SCHOOL_ID_KEY = "schoolId";
 
     //Generic data
     public static boolean categoriesAreSaved(Context context){
@@ -114,8 +113,8 @@ public class ParseLocalPrefs {
         return context.getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE)
                 .getString(SCHOOL_ID_KEY, null);
     }
-    public static void setSelectedSchoolId(Context context, String categoryId){
+    public static void setSelectedSchoolId(Context context, String schoolId){
         context.getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE)
-                .edit().putString(SCHOOL_ID_KEY, categoryId).apply();
+                .edit().putString(SCHOOL_ID_KEY, schoolId).apply();
     }
 }

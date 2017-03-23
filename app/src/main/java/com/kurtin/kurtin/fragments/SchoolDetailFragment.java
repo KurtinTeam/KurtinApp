@@ -31,15 +31,19 @@ import com.kurtin.kurtin.models.Media;
 import com.kurtin.kurtin.models.School;
 import com.kurtin.kurtin.models.TwitterMedia;
 import com.kurtin.kurtin.persistence.ParseLocalPrefs;
+import com.parse.DeleteCallback;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseRelation;
+import com.parse.SaveCallback;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.R.id.list;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -98,7 +102,7 @@ public class SchoolDetailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
+        Log.d(TAG, "Creating view");
         View view = inflater.inflate(R.layout.fragment_school_detail, container, false);
         bindUiElements(view);
         getContent();
@@ -154,9 +158,9 @@ public class SchoolDetailFragment extends Fragment {
 
     private void getContent(){
         Log.d(TAG, "Inside getContent()");
+//        testQuery();
+
         getSchools();
-//        getSchool();
-//        getSimilarSchools();
     }
 
     private void getSchools(){
@@ -178,8 +182,9 @@ public class SchoolDetailFragment extends Fragment {
                 public void done(List<School> schools, ParseException e) {
                     if (e == null) {
                         if(schools.size() != 0) {
-                            Log.d(TAG, "number of schools: " + schools.size());
-                            mSimilarSchools = schools;
+                            Log.d(TAG, "number of schools returned from local data: " + schools.size());
+                            mSimilarSchools.clear();
+                            mSimilarSchools.addAll(schools);
                             for (School school : schools) {
                                 if (school.getObjectId().equals(mSelectedSchoolId)) {
                                     Log.d(TAG, "Found selected school in list");
@@ -188,17 +193,26 @@ public class SchoolDetailFragment extends Fragment {
                                         Log.d(TAG, "Data Available");
                                         mSchoolReceived = true;
                                         makeMediaList();
+                                        break;
                                     }else{
                                         Log.d(TAG, "Data Not Available");
+                                        mSchool.fetchIfNeededInBackground(new GetCallback<School>() {
+                                            @Override
+                                            public void done(School school, ParseException e) {
+                                                Log.d(TAG, "Found school: " + school.getName());
+                                                mSchoolReceived = true;
+                                                makeMediaList();
+                                            }
+                                        });
                                     }
-                                    mSchool.fetchIfNeededInBackground(new GetCallback<School>() {
-                                        @Override
-                                        public void done(School school, ParseException e) {
-                                            Log.d(TAG, "Found school: " + school.getName());
-                                            mSchoolReceived = true;
-                                            makeMediaList();
-                                        }
-                                    });
+//                                    mSchool.fetchIfNeededInBackground(new GetCallback<School>() {
+//                                        @Override
+//                                        public void done(School school, ParseException e) {
+//                                            Log.d(TAG, "Found school: " + school.getName());
+//                                            mSchoolReceived = true;
+//                                            makeMediaList();
+//                                        }
+//                                    });
                                     break;
                                 }
                             }
@@ -229,15 +243,18 @@ public class SchoolDetailFragment extends Fragment {
         mSelectedSchoolId = ParseLocalPrefs.getSelectedSchoolId(getContext());
 
         final ParseQuery<Category> categoryQuery = Category.getQuery();
-        if (categoryObjectId == null) {
-            String categoryName = "Top LA College";
-            categoryQuery.whereEqualTo(Category.NAME_KEY, categoryName);
-            Log.d(TAG, "Searching for default Category: " + categoryName);
-        }else{
-            Log.d(TAG, "Searching for Category with Id: " + categoryObjectId);
-            categoryQuery.whereEqualTo(Category.OBJECT_ID_KEY, categoryObjectId);
-        }
-        categoryQuery.getFirstInBackground(new GetCallback<Category>() {
+
+        //TODO: Delete code below that was only necessary before we filled all categories
+//        if (categoryObjectId == null) {
+//            String categoryName = "Top LA College";
+//            categoryQuery.whereEqualTo(Category.NAME_KEY, categoryName);
+//            Log.d(TAG, "Searching for default Category: " + categoryName);
+//        }else{
+//            Log.d(TAG, "Searching for Category with Id: " + categoryObjectId);
+//            categoryQuery.whereEqualTo(Category.OBJECT_ID_KEY, categoryObjectId);
+//        }
+
+        categoryQuery.getInBackground(categoryObjectId, new GetCallback<Category>() {
             @Override
             public void done(Category category, ParseException e) {
                 final long categoryByNameQueryEndTime = System.currentTimeMillis();
@@ -263,11 +280,15 @@ public class SchoolDetailFragment extends Fragment {
                                     break;
                                 }
                             }
-                            mSimilarSchools = schools;
+                            mSimilarSchools.clear();
+                            mSimilarSchools.addAll(schools);
                             mSimilarSchoolsReceived = true;
+//                            pinSchoolsAsync();
                             makeMediaList();
                         }
                     });
+                }else{
+                    e.printStackTrace();
                 }
             }
         });
@@ -415,6 +436,69 @@ public class SchoolDetailFragment extends Fragment {
         ((MainActivity) getActivity()).hideSchoolDetailMediaView();
         rvMedia.setVisibility(View.VISIBLE);
         rlMediaDetail.setVisibility(View.GONE);
+    }
+
+    private void pinSchoolsAsync(){
+//        final List<School> schools = new ArrayList<>();
+//        schools.addAll(mSimilarSchools);
+        final Long startTime = System.currentTimeMillis();
+        ParseLocalPrefs.setCategorySchoolsAreSaved(getContext(), false);
+        Log.d(TAG, "About to unpin schools");
+        ParseObject.unpinAllInBackground(ParseLocalPrefs.CATEGORY_SCHOOLS_PIN, new DeleteCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e==null) {
+//                    ParseObject.pinAllInBackground(ParseLocalPrefs.CATEGORY_SCHOOLS_PIN, mSimilarSchools, new SaveCallback() {
+                        ParseObject.pinAllInBackground(ParseLocalPrefs.CATEGORY_SCHOOLS_PIN, mSimilarSchools, new SaveCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            if (e==null){
+                                ParseLocalPrefs.setCategorySchoolsAreSaved(getContext(), true);
+                                Long endTime = System.currentTimeMillis();
+                                Log.d(TAG, "Pinned " + mSimilarSchools.size() + " schools in " + (endTime - startTime) + " ms.");
+                            }else{
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                }else{
+                    Log.e(TAG, "Error unpinning schools");
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    private void testQuery(){
+        ParseQuery<School> testQuery = School.getQuery();
+//        testQuery.fromPin(ParseLocalPrefs.CATEGORY_SCHOOLS_PIN);
+        testQuery.fromLocalDatastore();
+        testQuery.findInBackground(new FindCallback<School>() {
+            @Override
+            public void done(List<School> objects, ParseException e) {
+                if(e==null){
+                    Log.d(TAG, "Test Query 1 returned " + objects.size() + " objects.");
+                    ParseQuery<School> testQuery2 = School.getQuery();
+//                    testQuery2.fromPin(ParseLocalPrefs.CATEGORY_SCHOOLS_PIN);
+                    testQuery2.fromLocalDatastore();
+                    testQuery2.findInBackground(new FindCallback<School>() {
+                        @Override
+                        public void done(List<School> objects, ParseException e) {
+                            if (e==null) {
+                                Log.d(TAG, "Test Query 2 returned " + objects.size() + " objects.");
+                                for (School school: objects){
+                                    Log.d(TAG, "Query 2: " + school.getName());
+                                }
+                            }else{
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                }else{
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
 }

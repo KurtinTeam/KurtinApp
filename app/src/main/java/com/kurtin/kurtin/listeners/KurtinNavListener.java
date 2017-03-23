@@ -14,4 +14,5 @@ public interface KurtinNavListener {
     void onCategoriesFragmentRequested();
     void onSchoolListFragmentRequested(String categoryObjId);
     void onSchoolDetailFragmentRequested(String schoolObjId, String categoryObjId, String categoryName);
+    void onSchoolDetailTabFragmentRequested();
 }

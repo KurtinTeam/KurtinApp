@@ -34,6 +34,8 @@
     <string name="school_media">Media</string>
     <string name="school_info">Info</string>
 
+    <!--Info Fragment-->
+    <string name="info_fragment_header">Info &amp; Stats</string>
 
 
 </resources>

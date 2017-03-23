@@ -6,6 +6,7 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.Arrays;
 import java.util.List;
@@ -40,9 +41,12 @@ public class School extends ParseObject {
     private static final String STUDENT_BODY_KEY = "studentBody";
     private static final String TWITTER_ALT_URL_KEY = "twitterAltUrl";
     private static final String INSTAGRAM_ALT_URL_KEY = "instagramAltUrl";
-    private static final String FB_POSTS = "fbPosts";
-    private static final String TWEETS = "tweets";
+    private static final String FB_POSTS_KEY = "fbPosts";
+    private static final String TWEETS_KEY = "tweets";
+    private static final String STATS_KEY = "stats";
     public static final List<String> BASIC_DISPLAY_KEYS = Arrays.asList("name", "state", "city", "studentImage", "logoImage");
+
+    public static final String OBJECT_ID = "objectId";
 
 
 
@@ -144,11 +148,15 @@ public class School extends ParseObject {
     }
 
     public JSONArray getFbPosts(){
-        return getJSONArray(FB_POSTS);
+        return getJSONArray(FB_POSTS_KEY);
     }
 
     public JSONArray getTweets(){
-        return getJSONArray(TWEETS);
+        return getJSONArray(TWEETS_KEY);
+    }
+
+    public JSONObject getStats() {
+        return getJSONObject(STATS_KEY);
     }
 
 }
